@@ -79,11 +79,11 @@ endef
 
 define Build/Compile
 	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/main)
-	$(call GoPackage/Build/Compile)
+	$(call GoPackage/Build/Compile,-ldflags "-s -w")
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 
 	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/infra/control/main)
-	$(call GoPackage/Build/Compile)
+	$(call GoPackage/Build/Compile,-ldflags "-s -w")
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 endef
 
