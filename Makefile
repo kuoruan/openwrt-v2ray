@@ -114,7 +114,7 @@ $(call Package/v2ray-assets/install,$(1))
 	$(INSTALL_DIR) $(1)/usr/bin
 	( \
 		for component in $(V2RAY_COMPONENTS); do \
-		$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/$$$$component $(1)/usr/bin ; \
+			$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/$$$$component $(1)/usr/bin ; \
 		done ; \
 	)
 endef
@@ -134,6 +134,12 @@ endef
 
 define Build/Prepare
 	$(Build/Prepare/Default)
+	( \
+		build="OpenWrt - Release $(PKG_RELEASE)" ; \
+		sed -i \
+			"s/\(build[[:space:]]*=[[:space:]]*\"\).*\(\"\)/\1$$$$build\2/" \
+			$(PKG_BUILD_DIR)/core.go ; \
+	)
 endef
 
 define Build/Compile
