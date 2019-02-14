@@ -53,7 +53,7 @@ define v2ray-core/templates
   endef
 
   define Package/$(1)/description
-  $(call Package/v2ra-corey/Default/description)
+  $(call Package/v2ray-core/Default/description)
 
   This package contains the $(1).
   endef
