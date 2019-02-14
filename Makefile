@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-core
-PKG_VERSION:=4.16
+PKG_VERSION:=4.15.1
 PKG_SOURCE_DATE:=2019-02-03
 PKG_SOURCE_VERSION:=c8f446aba50b2a422f3fff5f55d18a4aed78f0a5
 PKG_RELEASE:=1
@@ -135,6 +135,9 @@ endef
 define Build/Prepare
 	$(Build/Prepare/Default)
 	( \
+		sed -i \
+			's/\(version[[:space:]]*=[[:space:]]*"\).*\("\)/\1$(PKG_VERSION)\2/' \
+			$(PKG_BUILD_DIR)/core.go ; \
 		build="OpenWrt - Release $(PKG_RELEASE)" ; \
 		sed -i \
 			"s/\(build[[:space:]]*=[[:space:]]*\"\).*\(\"\)/\1$$$$build\2/" \
