@@ -1,4 +1,4 @@
-# openwrt-frp
+# openwrt-v2ray
 
 V2Ray for OpenWrt
 
@@ -10,14 +10,14 @@ OpenWrt/LEDE 上可用的 V2Ray
 
 - 到 [release](https://github.com/kuoruan/openwrt-v2ray/releases) 页面下载最新版的编译文件（注：请根据你的路由器架构下载对应版本）
 
-通常下载 ```v2ray-core_*.ipk``` 即可
+> 通常下载 ```v2ray-core_*.ipk``` 即可
 
 ### 文件说明
 
 | 文件名 | 内容 | 说明 |
 | ----- | --- | --- |
 | v2ray_*.ipk | 仅含 v2ray | 只支持 Protobuf 格式配置文件 |
-| v2ctl_*.ipk | 仅含 v2ctl | V2Ray 辅助工具 |
+| v2ctl_*.ipk | 仅含 v2ctl | V2Ray 辅助工具，提供 JSON 配置文件支持等 |
 | v2ray-assets_*.ipk | 包含 geoip.dat 和 geosite.dat | IP 数据文件和域名数据文件 |
 | v2ray-core_*.ipk | 完整包 | 包含以上所有内容 |
 
