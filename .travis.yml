@@ -29,6 +29,10 @@ env:
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
 install:
+- |
+  if [ -z "$TRAVIS_TAG" ] && [ "x$SDK" != "x-sdk-x86-64_" ] ; then
+    travis_terminate 0
+  fi
 - mkdir -p "$DOWNLOAD_DIR" && cd "$DOWNLOAD_DIR"
 - wget -c "http://us.archive.ubuntu.com/ubuntu/pool/main/c/ccache/ccache_${CCACHE_VERSION}-1_amd64.deb"
 - mkdir -p "${HOME}/local"
@@ -55,8 +59,8 @@ install:
 - export SDK_HOME="$(mktemp -d)"
 - cd "$SDK_HOME"
 - tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" --strip=1
-- \[ -d "${HOME}/dl" \] || mkdir -p "${HOME}/dl"
-- \[ -d "dl" \] && rm -rf dl
+- test -d "${HOME}/dl" || mkdir -p "${HOME}/dl"
+- test -d "dl" && rm -rf dl
 - ln -s "${HOME}/dl/" dl
 - echo "src-git base https://github.com/openwrt/openwrt.git" >feeds.conf
 - echo "src-git packages https://github.com/openwrt/packages.git" >>feeds.conf
