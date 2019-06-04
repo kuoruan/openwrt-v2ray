@@ -77,7 +77,7 @@ endef
 define Package/v2ray-core
   $(call Package/v2ray-core/Default)
   $(call project-v/SubMenu)
-	TITLE+= (full)
+  TITLE+= (full)
   USERID:=v2ray=10800:v2ray=10800
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
 endef
