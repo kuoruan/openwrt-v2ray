@@ -1,0 +1,76 @@
+menu "V2Ray Configuration"
+	depends on PACKAGE_v2ray-core
+
+choice
+	prompt "JSON Config Support"
+	default V2RAY_JSON_V2CTL
+
+config V2RAY_JSON_V2CTL
+	bool "Load JSON from v2ctl"
+
+config V2RAY_JSON_INTERNAL
+	bool "Load JSON Internally"
+
+config V2RAY_JSON_NONE
+	bool "None"
+
+endchoice
+
+choice
+	prompt "Disable Features"
+	default V2RAY_DISABLE_NONE
+
+config V2RAY_DISABLE_NONE
+	bool "None"
+
+config V2RAY_DISABLE_CUSTOM
+	bool "Custom"
+
+endchoice
+
+config V2RAY_DISABLE_DNS
+	bool "Disable Internal DNS Support"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_LOG
+	bool "Disable Log Support"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_POLICY
+	bool "Disable Local Policy Support"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_REVERSE
+	bool "Disable Reverse Proxy Support"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_ROUTING
+	bool "Disable Internal Routing Support"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_STATISTICS
+	bool "Disable Statistics Support"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_BLACKHOLE
+	bool "Disable Blackhole Protocol"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_DNS_PROXY
+	bool "Disable DNS Proxy"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+config V2RAY_DISABLE_SHADOWSOCKS
+	bool "Disable Shadowsocks Protocol"
+	depends on V2RAY_DISABLE_CUSTOM
+	default n
+
+endmenu
