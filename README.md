@@ -6,40 +6,29 @@ OpenWrt/LEDE 上可用的 V2Ray
 
 [![Release Version](https://img.shields.io/github/release/kuoruan/openwrt-v2ray.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest) [![Latest Release Download](https://img.shields.io/github/downloads/kuoruan/openwrt-v2ray/total.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest)
 
-## 安装说明
+## Install
 
-- 到 [release](https://github.com/kuoruan/openwrt-v2ray/releases) 页面下载最新版的编译文件（注：请根据你的路由器架构下载对应版本）
+- Download pre build ipk file from [releases](https://github.com/kuoruan/openwrt-v2ray/releases)
 
-> 通常下载 ```v2ray-core_*.ipk``` 即可
-
-### 文件说明
-
-| 文件名 | 内容 | 说明 |
-| ----- | --- | --- |
-| v2ray_*.ipk | 仅含 v2ray | 只支持 Protobuf 格式配置文件 |
-| v2ctl_*.ipk | 仅含 v2ctl | V2Ray 辅助工具，提供 JSON 配置文件支持等 |
-| v2ray-assets_*.ipk | 包含 geoip.dat 和 geosite.dat | IP 数据文件和域名数据文件 |
-| v2ray-core_*.ipk | 完整包 | 包含以上所有内容 |
-
-- 将文件上传到你的路由器上，进行安装
+- Upload file to your router, install it with ssh command.
 
 ```sh
-opkg install v2*.ipk
+opkg install v2ray-core*.ipk
 ```
 
-安装完毕，你可以在 ```/usr/bin``` 目录下找到对应的二进制文件。
+Bin files will install in ```/usr/bin```.
 
-## 编译说明
+## Custom build
 
-请使用最新版的 OpenWrt SDK 或 master 版源代码。
+1. Use the latest OpenWrt SDK or with source code in master branch.
 
-进入 SDK 根目录或源码根目录，执行命令下载 Makefile：
+2. Enter root directory of SDK, then download the Makefile:
 
 ```sh
 git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray
 ```
 
-编译流程：
+Start build:
 
 ```sh
 ./scripts/feeds update -a
@@ -47,13 +36,15 @@ git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray
 
 make menuconfig
 
-Languages  ---> Go  ---> <M> golang-v2ray-core-dev # 源码包，通常并不需要
-Network  ---> Web Servers/Proxies  ---> <*> v2ray-core
+Languages ---> Go ---> <M> golang-v2ray-core-dev # Source
+Network ---> Project V ---> <*> v2ray-core
 
 make package/v2ray/{clean,compile} V=s
 ```
 
-## 卸载说明
+- You can custom the features in "V2Ray Configuration" option.
+
+## Uninstall
 
 ```sh
 opkg remove v2ray-core
