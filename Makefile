@@ -228,6 +228,13 @@ ifneq ($(V2RAY_SED_ARGS),)
 			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
 	)
 endif
+ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
+	wget -O $(PKG_BUILD_DIR)/release/config/geoip.dat \
+		https://github.com/v2ray/geoip/releases/latest/download/geoip.dat
+
+	wget -O $(PKG_BUILD_DIR)/release/config/geosite.dat \
+		https://github.com/v2ray/domain-list-community/releases/latest/download/dlc.dat
+endif
 endef
 
 define Build/Compile
