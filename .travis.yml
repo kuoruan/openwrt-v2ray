@@ -9,6 +9,7 @@ cache:
   directories:
   - "${HOME}/dl"
   - "${HOME}/files"
+  - "${HOME}/feeds"
 git:
   depth: 3
   submodules: false
@@ -17,7 +18,7 @@ env:
   - PACKAGE=v2ray-core
   - USER=kuoruan
   - REPO=openwrt-v2ray
-  - CCACHE_VERSION=3.6
+  - CCACHE_VERSION=3.7.1
   - DOWNLOAD_DIR=${HOME}/files
   matrix:
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
@@ -30,17 +31,8 @@ env:
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x_
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
-install:
-- |
-  if [ -z "$TRAVIS_TAG" ] && [ "x$SDK" != "x-sdk-x86-64_" ] ; then
-    travis_terminate 0
-  fi
-- mkdir -p "$DOWNLOAD_DIR" && cd "$DOWNLOAD_DIR"
-- wget -c "http://us.archive.ubuntu.com/ubuntu/pool/main/c/ccache/ccache_${CCACHE_VERSION}-1_amd64.deb"
-- mkdir -p "${HOME}/local"
-- sudo apt-get install -yq dpkg
-- dpkg -x "ccache_${CCACHE_VERSION}-1_amd64.deb" "${HOME}/local"
-- export PATH="${HOME}/local/usr/bin:$PATH"
+before_install:
+- test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
 - cd "$DOWNLOAD_DIR"
 - wget "${SDK_PATH}/sha256sums" -O sha256sums
 - |
@@ -58,25 +50,37 @@ install:
     fi
   fi
 - file "${DOWNLOAD_DIR}/${SDK_FILE}"
-- export SDK_HOME="$(mktemp -d)"
-- cd "$SDK_HOME"
-- tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" --strip=1
+install:
+- |
+  if [ -z "$TRAVIS_TAG" ] && [ "x$SDK" != "x-sdk-x86-64_" ] ; then
+    travis_terminate 0
+  fi
 - test -d "${HOME}/dl" || mkdir -p "${HOME}/dl"
+- test -d "${HOME}/feeds" || mkdir -p "${HOME}/feeds"
+- export SDK_HOME="$(mktemp -d)"
+- tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" -C "$SDK_HOME" --strip=1
+- cd "$SDK_HOME"
 - test -d "dl" && rm -rf dl
+- test -d "feeds" && rm -rf feeds
 - ln -s "${HOME}/dl/" dl
+- ln -s "${HOME}/feeds" feeds
 - echo "src-git base https://github.com/openwrt/openwrt.git" >feeds.conf
 - echo "src-git packages https://github.com/openwrt/packages.git" >>feeds.conf
 - echo "src-git luci https://github.com/openwrt/luci.git" >>feeds.conf
 - echo "src-git routing https://git.openwrt.org/feed/routing.git" >>feeds.conf
 - echo "src-git telephony https://github.com/openwrt/telephony.git" >>feeds.conf
 - ln -s "$TRAVIS_BUILD_DIR" "package/${PACKAGE}"
+before_script:
+- cd "$SDK_HOME"
+- ./scripts/feeds update -a >/dev/null
+- ./scripts/feeds install -a >/dev/null
+- make defconfig
 script:
 - cd "$SDK_HOME"
-- "./scripts/feeds update -a >/dev/null"
-- "./scripts/feeds install -a >/dev/null"
-- make defconfig
 - make package/${PACKAGE}/compile V=s
+after_success:
 - find "${SDK_HOME}/bin/"
+before_deploy:
 - find "${SDK_HOME}/bin/" -name v2*.ipk -exec cp {} "$TRAVIS_BUILD_DIR" \;
 - ls -hl "$TRAVIS_BUILD_DIR" | grep .*\.ipk
 deploy:
