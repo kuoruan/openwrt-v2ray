@@ -20,7 +20,7 @@ Bin files will install in ```/usr/bin```.
 
 ## Custom build
 
-1. Use the latest [OpenWrt SDK](https://downloads.openwrt.org/snapshots/) or with source code in master branch (requires golang modules support, commit openwrt/packages@7dc1f3e and later).
+1. Use the latest [OpenWrt SDK](https://downloads.openwrt.org/snapshots/) or with source code in master branch (requires golang modules support, commit [openwrt/packages@7dc1f3e](https://github.com/openwrt/packages/commit/7dc1f3e0293588ebc544e8eee104043dd0dacaf5) and later).
 
 2. Enter root directory of SDK, then download the Makefile:
 
