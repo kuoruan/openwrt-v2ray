@@ -18,7 +18,6 @@ env:
   - PACKAGE=v2ray-core
   - USER=kuoruan
   - REPO=openwrt-v2ray
-  - CCACHE_VERSION=3.7.1
   - DOWNLOAD_DIR=${HOME}/files
   matrix:
   - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
@@ -60,8 +59,8 @@ install:
 - export SDK_HOME="$(mktemp -d)"
 - tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" -C "$SDK_HOME" --strip=1
 - cd "$SDK_HOME"
-- test -d "dl" && rm -rf dl
-- test -d "feeds" && rm -rf feeds
+- test -d "dl" && rm -rf dl || true
+- test -d "feeds" && rm -rf feeds || true
 - ln -s "${HOME}/dl/" dl
 - ln -s "${HOME}/feeds" feeds
 - echo "src-git base https://github.com/openwrt/openwrt.git" >feeds.conf
