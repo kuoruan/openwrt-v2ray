@@ -25,8 +25,10 @@ Bin files will install in ```/usr/bin```.
 2. Enter root directory of SDK, then download the Makefile:
 
 ```sh
-git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray
+git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray-core
 ```
+
+> For Chinese users, ```export GOPROXY=https://goproxy.io``` before build.
 
 Start build:
 
@@ -39,7 +41,7 @@ make menuconfig
 Languages ---> Go ---> <M> golang-v2ray-core-dev # Source
 Network ---> Project V ---> <*> v2ray-core
 
-make package/v2ray/{clean,compile} V=s
+make package/v2ray-core/{clean,compile} V=s
 ```
 
 - You can custom the features in "V2Ray Configuration" option.
