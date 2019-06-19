@@ -25,6 +25,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_V2RAY_JSON_NONE \
 	CONFIG_V2RAY_EXCLUDE_V2CTL \
 	CONFIG_V2RAY_EXCLUDE_ASSETS \
+	CONFIG_V2RAY_COMPRESS_UPX \
 	CONFIG_V2RAY_DISABLE_NONE \
 	CONFIG_V2RAY_DISABLE_CUSTOM \
 	CONFIG_V2RAY_DISABLE_DNS \
@@ -242,10 +243,18 @@ define Build/Compile
 	$(call GoPackage/Build/Compile,-ldflags "-s -w")
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 
+ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
+	upx --ultra-brute $(GO_PKG_BUILD_BIN_DIR)/v2ray
+endif
+
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/infra/control/main)
 	$(call GoPackage/Build/Compile,-ldflags "-s -w")
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
+
+ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
+	upx --ultra-brute $(GO_PKG_BUILD_BIN_DIR)/v2ctl
+endif
 endif
 endef
 
