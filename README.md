@@ -4,7 +4,7 @@ V2Ray for OpenWrt
 
 OpenWrt/LEDE 上可用的 V2Ray
 
-[![Release Version](https://img.shields.io/github/release/kuoruan/openwrt-v2ray.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest) [![Latest Release Download](https://img.shields.io/github/downloads/kuoruan/openwrt-v2ray/total.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest)
+[![Release Version](https://img.shields.io/github/release/kuoruan/openwrt-v2ray.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest) [![Latest Release Download](https://img.shields.io/github/downloads/kuoruan/openwrt-v2ray/latest/total.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest) [![Releases Download](https://img.shields.io/github/downloads/kuoruan/openwrt-v2ray/total.svg)](https://github.com/kuoruan/openwrt-v2ray/releases)
 
 For luci-app-v2ray, please head to [kuoruan/luci-app-v2ray](https://github.com/kuoruan/luci-app-v2ray)
 
