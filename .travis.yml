@@ -7,81 +7,82 @@ compiler: gcc
 cache:
   bundler: true
   directories:
-  - "${HOME}/dl"
-  - "${HOME}/files"
-  - "${HOME}/feeds"
+    - "${HOME}/dl"
+    - "${HOME}/files"
+    - "${HOME}/feeds"
 git:
   depth: 3
   submodules: false
 env:
   global:
-  - PACKAGE=v2ray-core
-  - USER=kuoruan
-  - REPO=openwrt-v2ray
-  - DOWNLOAD_DIR=${HOME}/files
+    - PACKAGE=v2ray-core
+    - USER=kuoruan
+    - REPO=openwrt-v2ray
+    - DOWNLOAD_DIR=${HOME}/files
   matrix:
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620 SDK=-sdk-ramips-mt7620_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710 SDK=-sdk-brcm2708-bcm2710_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic SDK=-sdk-brcm63xx-generic_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic SDK=-sdk-bcm53xx_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic SDK=-sdk-brcm47xx-
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9 SDK=-sdk-mvebu-cortexa9_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
-  - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620 SDK=-sdk-ramips-mt7620_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710 SDK=-sdk-brcm2708-bcm2710_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic SDK=-sdk-brcm63xx-generic_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic SDK=-sdk-bcm53xx_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic SDK=-sdk-brcm47xx-
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9 SDK=-sdk-mvebu-cortexa9_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72 SDK=-sdk-mvebu-cortexa72_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
+    - SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
 before_install:
-- test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
-- cd "$DOWNLOAD_DIR"
-- wget "${SDK_PATH}/sha256sums" -O sha256sums
-- |
-  if ! grep -- "$SDK" sha256sums > sha256sums.small 2>/dev/null ; then
-    printf "\033[1;31m=== Can not find ${SDK} file in sha256sums.\033[m\n"
-    exit 1
-  fi
-- export SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
-- |
-  if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
-    wget "${SDK_PATH}/${SDK_FILE}" -O "$SDK_FILE"
-    if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
-      printf "\033[1;31m=== SDK can not be verified!\033[m\n"
+  - test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
+  - cd "$DOWNLOAD_DIR"
+  - wget "${SDK_PATH}/sha256sums" -O sha256sums
+  - |
+    if ! grep -- "$SDK" sha256sums > sha256sums.small 2>/dev/null ; then
+      printf "\033[1;31m=== Can not find ${SDK} file in sha256sums.\033[m\n"
       exit 1
     fi
-  fi
-- file "${DOWNLOAD_DIR}/${SDK_FILE}"
+  - export SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
+  - |
+    if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
+      wget "${SDK_PATH}/${SDK_FILE}" -O "$SDK_FILE"
+      if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
+        printf "\033[1;31m=== SDK can not be verified!\033[m\n"
+        exit 1
+      fi
+    fi
+  - file "${DOWNLOAD_DIR}/${SDK_FILE}"
 install:
-- |
-  if [ -z "$TRAVIS_TAG" ] && [ "x$SDK" != "x-sdk-x86-64_" ] ; then
-    travis_terminate 0
-  fi
-- test -d "${HOME}/dl" || mkdir -p "${HOME}/dl"
-- test -d "${HOME}/feeds" || mkdir -p "${HOME}/feeds"
-- export SDK_HOME="$(mktemp -d)"
-- tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" -C "$SDK_HOME" --strip=1
-- cd "$SDK_HOME"
-- test -d "dl" && rm -rf dl || true
-- test -d "feeds" && rm -rf feeds || true
-- ln -s "${HOME}/dl/" dl
-- ln -s "${HOME}/feeds" feeds
-- echo "src-git base https://github.com/openwrt/openwrt.git" >feeds.conf
-- echo "src-git packages https://github.com/openwrt/packages.git" >>feeds.conf
-- echo "src-git luci https://github.com/openwrt/luci.git" >>feeds.conf
-- echo "src-git routing https://git.openwrt.org/feed/routing.git" >>feeds.conf
-- echo "src-git telephony https://github.com/openwrt/telephony.git" >>feeds.conf
-- ln -s "$TRAVIS_BUILD_DIR" "package/${PACKAGE}"
+  - |
+    if [ -z "$TRAVIS_TAG" ] && [ "x$SDK" != "x-sdk-x86-64_" ] ; then
+      travis_terminate 0
+    fi
+  - test -d "${HOME}/dl" || mkdir -p "${HOME}/dl"
+  - test -d "${HOME}/feeds" || mkdir -p "${HOME}/feeds"
+  - export SDK_HOME="$(mktemp -d)"
+  - tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" -C "$SDK_HOME" --strip=1
+  - cd "$SDK_HOME"
+  - test -d "dl" && rm -rf dl || true
+  - test -d "feeds" && rm -rf feeds || true
+  - ln -s "${HOME}/dl/" dl
+  - ln -s "${HOME}/feeds" feeds
+  - echo "src-git base https://github.com/openwrt/openwrt.git" >feeds.conf
+  - echo "src-git packages https://github.com/openwrt/packages.git" >>feeds.conf
+  - echo "src-git luci https://github.com/openwrt/luci.git" >>feeds.conf
+  - echo "src-git routing https://git.openwrt.org/feed/routing.git" >>feeds.conf
+  - echo "src-git telephony https://github.com/openwrt/telephony.git" >>feeds.conf
+  - ln -s "$TRAVIS_BUILD_DIR" "package/${PACKAGE}"
 before_script:
-- cd "$SDK_HOME"
-- ./scripts/feeds update -a >/dev/null
-- ./scripts/feeds install -a >/dev/null
-- make defconfig
+  - cd "$SDK_HOME"
+  - ./scripts/feeds update -a >/dev/null
+  - ./scripts/feeds install -a >/dev/null
+  - make defconfig
 script:
-- cd "$SDK_HOME"
-- make package/${PACKAGE}/compile V=s
+  - cd "$SDK_HOME"
+  - make package/${PACKAGE}/compile V=s
 after_success:
-- find "${SDK_HOME}/bin/"
+  - find "${SDK_HOME}/bin/"
 before_deploy:
-- find "${SDK_HOME}/bin/" -name v2*.ipk -exec cp {} "$TRAVIS_BUILD_DIR" \;
-- ls -hl "$TRAVIS_BUILD_DIR" | grep .*\.ipk
+  - find "${SDK_HOME}/bin/" -name v2*.ipk -exec cp {} "$TRAVIS_BUILD_DIR" \;
+  - ls -hl "$TRAVIS_BUILD_DIR" | grep .*\.ipk
 deploy:
   provider: releases
   file_glob: true
