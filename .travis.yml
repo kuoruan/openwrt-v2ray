@@ -1,13 +1,5 @@
-dist: bionic
+dist: xenial
 sudo: false
-addons:
-  apt:
-    update: true
-    packages:
-      - python
-      - libncurses5-dev
-      - unzip
-      - build-essential
 notifications:
   email: false
 language: c
