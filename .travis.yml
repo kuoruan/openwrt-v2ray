@@ -1,5 +1,8 @@
 dist: bionic
 sudo: false
+python:
+  - "2.7"
+  - "3.5"
 notifications:
   email: false
 language: c
