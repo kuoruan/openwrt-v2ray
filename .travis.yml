@@ -1,8 +1,13 @@
 dist: bionic
 sudo: false
-python:
-  - "2.7"
-  - "3.5"
+addons:
+  apt:
+    update: true
+    packages:
+      - python
+      - libncurses5-dev
+      - unzip
+      - build-essential
 notifications:
   email: false
 language: c
