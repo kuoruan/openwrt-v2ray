@@ -55,30 +55,17 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=v2ray.com/core
+GO_PKG_LDFLAGS:=-s -w
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/v2ray-core/Default
+define Package/v2ray-core
   TITLE:=A platform for building proxies
   URL:=https://www.v2ray.com
-endef
-
-define Package/v2ray-core/Default/description
-Project V is a set of network tools that help you to build your own computer network.
-It secures your network connections and thus protects your privacy.
-endef
-
-define project-v/SubMenu
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Project V
-endef
-
-define Package/v2ray-core
-  $(call Package/v2ray-core/Default)
-  $(call project-v/SubMenu)
-  TITLE+= (full)
   USERID:=v2ray=10800:v2ray=10800
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
 endef
@@ -88,7 +75,8 @@ define Package/v2ray-core/config
 endef
 
 define Package/v2ray-core/description
-$(call Package/v2ray-core/Default/description)
+Project V is a set of network tools that help you to build your own computer network.
+It secures your network connections and thus protects your privacy.
 
   This package contains v2ray, v2ctl and v2ray-assets.
 endef
@@ -214,8 +202,35 @@ endif
 
 endif
 
+GEOIP_VER:=latest
+GEOIP_FILE:=geoip-$(GEOIP_VER).dat
+
+define Download/geoip.dat
+  URL:=@GITHUB/v2ray/geoip/releases/$(GEOIP_VER)/download
+  URL_FILE:=geoip.dat
+  FILE:=$(GEOIP_FILE)
+  HASH:=skip
+endef
+
+GEOSITE_VER:=latest
+GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
+
+define Download/geosite.dat
+  URL:=@GITHUB/v2ray/domain-list-community/releases/$(GEOSITE_VER)/download
+  URL_FILE:=dlc.dat
+  FILE:=$(GEOIP_FILE)
+  HASH:=skip
+endef
+
 define Build/Prepare
 	$(Build/Prepare/Default)
+
+	$(eval $(call Download,geoip.dat))
+	$(eval $(call Download,geosite.dat))
+
+	cp -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/release/config/geoip.dat
+	cp -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
+
 	( \
 		sed -i \
 			's/\(version[[:space:]]*=[[:space:]]*"\).*\("\)/\1$(PKG_VERSION)\2/; \
@@ -229,18 +244,11 @@ ifneq ($(V2RAY_SED_ARGS),)
 			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
 	)
 endif
-ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
-	wget -O $(PKG_BUILD_DIR)/release/config/geoip.dat \
-		https://github.com/v2ray/geoip/releases/latest/download/geoip.dat
-
-	wget -O $(PKG_BUILD_DIR)/release/config/geosite.dat \
-		https://github.com/v2ray/domain-list-community/releases/latest/download/dlc.dat
-endif
 endef
 
 define Build/Compile
 	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/main)
-	$(call GoPackage/Build/Compile,-ldflags "-s -w")
+	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
@@ -249,7 +257,7 @@ endif
 
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/infra/control/main)
-	$(call GoPackage/Build/Compile,-ldflags "-s -w")
+	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
@@ -278,20 +286,5 @@ ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 endif
 endef
 
-define Package/golang-v2ray-core-dev
-$(call Package/v2ray-core/Default)
-$(call GoPackage/GoSubMenu)
-  TITLE+= (source files)
-  PKGARCH:=all
-endef
-
-define Package/golang-v2ray-core-dev/description
-$(call Package/v2ray-core/Default/description)
-
-This package provides the source files for v2ray-core.
-endef
-
 $(eval $(call GoBinPackage,v2ray-core))
 $(eval $(call BuildPackage,v2ray-core))
-$(eval $(call GoSrcPackage,golang-v2ray-core-dev))
-$(eval $(call BuildPackage,golang-v2ray-core-dev))
