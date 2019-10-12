@@ -206,7 +206,7 @@ GEOIP_VER:=latest
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
 define Download/geoip.dat
-  URL:=@GITHUB/v2ray/geoip/releases/$(GEOIP_VER)/download
+  URL:=https://github.com/v2ray/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
   HASH:=skip
@@ -216,7 +216,7 @@ GEOSITE_VER:=latest
 GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
 
 define Download/geosite.dat
-  URL:=@GITHUB/v2ray/domain-list-community/releases/$(GEOSITE_VER)/download
+  URL:=https://github.com/v2ray/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOIP_FILE)
   HASH:=skip
