@@ -40,7 +40,6 @@ Start build:
 
 make menuconfig
 
-Languages ---> Go ---> <M> golang-v2ray-core-dev # Source
 Network ---> Project V ---> <*> v2ray-core
 
 make package/v2ray-core/{clean,compile} V=s
