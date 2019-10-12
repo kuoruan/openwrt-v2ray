@@ -30,31 +30,31 @@ env:
     - GITHUB_USER=kuoruan
     - GITHUB_REPO=openwrt-v2ray
     - DOWNLOAD_DIR=${HOME}/files
-  matrix:
-    include:
-      - env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620 SDK=-sdk-ramips-mt7620_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709 SDK=-sdk-brcm2708-bcm2709_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710 SDK=-sdk-brcm2708-bcm2710_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic SDK=-sdk-brcm63xx-generic_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic SDK=-sdk-bcm53xx-generic_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic SDK=-sdk-brcm47xx-generic_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9 SDK=-sdk-mvebu-cortexa9_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72 SDK=-sdk-mvebu-cortexa72_
-      - if: tag IS present
-        env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x-generic_
+matrix:
+  include:
+    - env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620 SDK=-sdk-ramips-mt7620_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709 SDK=-sdk-brcm2708-bcm2709_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710 SDK=-sdk-brcm2708-bcm2710_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic SDK=-sdk-brcm63xx-generic_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic SDK=-sdk-bcm53xx-generic_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic SDK=-sdk-brcm47xx-generic_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9 SDK=-sdk-mvebu-cortexa9_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72 SDK=-sdk-mvebu-cortexa72_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x-generic_
 before_install:
   - test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
   - cd "$DOWNLOAD_DIR"
