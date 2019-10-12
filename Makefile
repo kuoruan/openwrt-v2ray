@@ -218,18 +218,16 @@ GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
 define Download/geosite.dat
   URL:=https://github.com/v2ray/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
-  FILE:=$(GEOIP_FILE)
+  FILE:=$(GEOSITE_FILE)
   HASH:=skip
 endef
 
 define Build/Prepare
 	$(Build/Prepare/Default)
 
-	$(eval $(call Download,geoip.dat))
-	$(eval $(call Download,geosite.dat))
-
-	cp -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/release/config/geoip.dat
-	cp -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
+	# move file to make sure download new file every build
+	mv -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/release/config/geoip.dat
+	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
 
 	( \
 		sed -i \
@@ -286,5 +284,7 @@ ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 endif
 endef
 
+$(eval $(call Download,geoip.dat))
+$(eval $(call Download,geosite.dat))
 $(eval $(call GoBinPackage,v2ray-core))
 $(eval $(call BuildPackage,v2ray-core))
