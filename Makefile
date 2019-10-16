@@ -101,7 +101,8 @@ endif
 
 ifeq ($(CONFIG_V2RAY_DISABLE_LOG),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/log"/\/\/ &/;
+	s/_ "v2ray.com\/core\/app\/log"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/app\/log\/command"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_V2RAY_DISABLE_POLICY),y)
@@ -121,7 +122,8 @@ endif
 
 ifeq ($(CONFIG_V2RAY_DISABLE_STATISTICS),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/stats"/\/\/ &/;
+	s/_ "v2ray.com\/core\/app\/stats"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/app\/stats\/command"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_V2RAY_DISABLE_BLACKHOLE_PROTO),y)
@@ -187,7 +189,8 @@ endif
 
 ifeq ($(CONFIG_V2RAY_DISABLE_HTTP2_TRANS),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/http"/\/\/ &/;
+	s/_ "v2ray.com\/core\/transport\/internet\/http"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/http"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_V2RAY_DISABLE_DOMAIN_SOCKET_TRANS),y)
@@ -198,6 +201,16 @@ endif
 ifeq ($(CONFIG_V2RAY_DISABLE_QUIC_TRANS),y)
 V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/quic"/\/\/ &/;
+endif
+
+ifeq ($(CONFIG_V2RAY_DISABLE_MKCP_TRANS)$(CONFIG_V2RAY_DISABLE_QUIC_TRANS),yy)
+V2RAY_SED_ARGS += \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/noop"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/srtp"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/tls"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/utp"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wechat"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wireguard"/\/\/ &/;
 endif
 
 endif
@@ -284,7 +297,10 @@ ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 endif
 endef
 
+ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 $(eval $(call Download,geoip.dat))
 $(eval $(call Download,geosite.dat))
+endif
+
 $(eval $(call GoBinPackage,v2ray-core))
 $(eval $(call BuildPackage,v2ray-core))
