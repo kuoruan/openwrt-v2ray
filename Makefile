@@ -278,16 +278,14 @@ endif
 endef
 
 define Package/v2ray-core/install
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+
 	$(INSTALL_DIR) $(1)/usr/bin
 
-	$(INSTALL_BIN) \
-		$(GO_PKG_BUILD_BIN_DIR)/v2ray \
-		$(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ray $(1)/usr/bin
 
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
-	$(INSTALL_BIN) \
-		$(GO_PKG_BUILD_BIN_DIR)/v2ctl \
-		$(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ctl $(1)/usr/bin
 endif
 
 ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
