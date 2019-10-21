@@ -30,6 +30,7 @@ env:
     - GITHUB_USER=kuoruan
     - GITHUB_REPO=openwrt-v2ray
     - DOWNLOAD_DIR=${HOME}/files
+    - CONFIG_CCACHE=y
 matrix:
   include:
     - env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
