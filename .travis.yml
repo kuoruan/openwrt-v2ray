@@ -93,6 +93,7 @@ install:
 before_script:
   - cd "$SDK_HOME"
   - ./scripts/feeds update -a >/dev/null
+  - test -d ./feeds/packages/net/v2ray-core && rm -rf ./feeds/packages/net/v2ray-core || true
   - ./scripts/feeds install -a >/dev/null
   - make defconfig
 script:
