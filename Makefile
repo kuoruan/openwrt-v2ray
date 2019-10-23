@@ -67,7 +67,7 @@ define Package/v2ray-core
   CATEGORY:=Network
   SUBMENU:=Project V
   USERID:=v2ray=10800:v2ray=10800
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/v2ray-core/config
