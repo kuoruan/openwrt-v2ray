@@ -246,7 +246,7 @@ endif
 	( \
 		sed -i \
 			's/\(version[[:space:]]*=[[:space:]]*"\).*\("\)/\1$(PKG_VERSION)\2/; \
-			s/\(build[[:space:]]*=[[:space:]]*"\).*\("\)/\1OpenWrt - Release $(PKG_RELEASE)\2/' \
+			s/\(build[[:space:]]*=[[:space:]]*"\).*\("\)/\1OpenWrt R$(PKG_RELEASE)\2/' \
 			$(PKG_BUILD_DIR)/core.go ; \
 	)
 ifneq ($(V2RAY_SED_ARGS),)
