@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 Xingwang Liao
+# Copyright (C) 2019-2020 Xingwang Liao
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
