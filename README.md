@@ -8,7 +8,39 @@ OpenWrt/LEDE 上可用的 V2Ray
 
 For luci-app-v2ray, please head to [kuoruan/luci-app-v2ray](https://github.com/kuoruan/luci-app-v2ray)
 
-## Install
+## Install via OPKG
+
+1. Add new opkg key:
+
+```sh
+wget -O kuoruan-public.key http://openwrt.kuoruan.net/packages/public.key
+opkg-key add kuoruan-public.key
+```
+
+2. Add opkg repository:
+
+```sh
+echo "src/gz kuoruan_packages http://openwrt.kuoruan.net/packages/releases/$(. /etc/openwrt_release ; echo $DISTRIB_ARCH)" \
+  >> /etc/opkg/customfeeds.conf
+```
+
+replace ```http://``` with ```https://``` if you like.
+
+3. Install package:
+
+```sh
+opkg update
+opkg install v2ray-core
+```
+
+4. Upgrade package:
+
+```sh
+opkg update
+opkg upgrade v2ray-core
+```
+
+## Manual Install
 
 - Download pre build ipk file from [releases](https://github.com/kuoruan/openwrt-v2ray/releases)
 
