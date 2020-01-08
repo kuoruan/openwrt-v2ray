@@ -56,6 +56,12 @@ matrix:
       env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72 SDK=-sdk-mvebu-cortexa72_
     - if: tag IS present
       env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x-generic_
+    - if: tag IS present
+      env: SDK_PATH=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b SDK=-sdk-layerscape-armv8_64b_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/octeon/generic SDK=-sdk-octeon_
+    - if: tag IS present
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/octeontx/generic SDK=-sdk-octeontx_
 before_install:
   - test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
   - cd "$DOWNLOAD_DIR"
