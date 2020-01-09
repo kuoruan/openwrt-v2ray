@@ -60,7 +60,7 @@ matrix:
       env: SDK_URL=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b/openwrt-sdk-layerscape-armv8_64b_gcc-8.3.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # mips64_octeonplus
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/octeon/generic/openwrt-sdk-octeon_gcc-8.3.0_musl.Linux-x86_64.tar.xz
-    - if: tag IS presnet # arc_arc700
+    - if: tag IS present # arc_arc700
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/arc770/generic/openwrt-sdk-arc770-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
     - if: tag IS present # mips64_octeon
       env: SDK_URL=http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic/openwrt-sdk-18.06.5-octeon_gcc-7.3.0_musl.Linux-x86_64.tar.xz
@@ -70,15 +70,16 @@ before_install:
   - test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
   - cd "$DOWNLOAD_DIR"
   - |
-    if ! ( wget -q -O - "${SDK_URL_PATH}/sha256sums" | grep "$SDK" sha256sums > sha256sums.small 2>/dev/null ) ; then
-      printf "\033[1;31m=== Can not find ${SDK} file in sha256sums.\033[m\n"
+    if ! ( wget -q -O - "${SDK_URL_PATH}/sha256sums" | \
+      grep "$SDK_NAME" sha256sums > sha256sums.small 2>/dev/null ) ; then
+      echo "Can not find ${SDK_NAME} file in sha256sums."
       exit 1
     fi
   - |
     if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
       wget -q -O "$SDK_NAME" "$SDK_URL"
       if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
-        printf "\033[1;31m=== SDK can not be verified!\033[m\n"
+        echo "SDK can not be verified!"
         exit 1
       fi
     fi
@@ -107,10 +108,10 @@ before_script:
       rm -rf ./feeds/packages/net/v2ray-core || true
   - |
     test -d ./feeds/packages/lang/golang && \
-	    rm -rf ./feeds/packages/lang/golang || true
+      rm -rf ./feeds/packages/lang/golang || true
   - |
     curl https://codeload.github.com/openwrt/packages/tar.gz/master | \
-	    tar -xz -C ./feeds/packages/lang --strip=2 packages-master/lang/golang
+      tar -xz -C ./feeds/packages/lang --strip=2 packages-master/lang/golang
   - ./scripts/feeds install -a
   - make defconfig
 script:
