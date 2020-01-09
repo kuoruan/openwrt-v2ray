@@ -22,7 +22,6 @@ addons:
       - zlib1g-dev
       - gettext
       - libssl-dev
-      - xsltproc
       - zip
 env:
   global:
@@ -71,7 +70,7 @@ before_install:
   - cd "$DOWNLOAD_DIR"
   - |
     if ! ( wget -q -O - "${SDK_URL_PATH}/sha256sums" | \
-      grep "$SDK_NAME" sha256sums > sha256sums.small 2>/dev/null ) ; then
+      grep "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
       echo "Can not find ${SDK_NAME} file in sha256sums."
       exit 1
     fi
