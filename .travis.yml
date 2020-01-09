@@ -32,75 +32,85 @@ env:
     - DOWNLOAD_DIR=${HOME}/files
     - CONFIG_CCACHE=y
 matrix:
-  include:
-    - env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK=-sdk-x86-64_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK=-sdk-x86-generic_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK=-sdk-ar71xx-generic_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620 SDK=-sdk-ramips-mt7620_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709 SDK=-sdk-brcm2708-bcm2709_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710 SDK=-sdk-brcm2708-bcm2710_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic SDK=-sdk-brcm63xx-generic_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic SDK=-sdk-bcm53xx-generic_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic SDK=-sdk-brcm47xx-generic_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9 SDK=-sdk-mvebu-cortexa9_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72 SDK=-sdk-mvebu-cortexa72_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK=-sdk-ipq806x-generic_
-    - if: tag IS present
-      env: SDK_PATH=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b SDK=-sdk-layerscape-armv8_64b_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/octeon/generic SDK=-sdk-octeon_
-    - if: tag IS present
-      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/octeontx/generic SDK=-sdk-octeontx_
+  include: # x86-64
+    - env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # i386_pentium4
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/x86/generic/openwrt-sdk-x86-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # mips_24kc
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic/openwrt-sdk-ar71xx-generic_gcc-7.4.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # mipsel_24kc
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620/openwrt-sdk-ramips-mt7620_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # arm_cortex-a7_neon-vfpv4
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709/openwrt-sdk-brcm2708-bcm2709_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+    - if: tag IS present # aarch64_cortex-a53
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710/openwrt-sdk-brcm2708-bcm2710_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # mips_mips32
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic/openwrt-sdk-brcm63xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # arm_cortex-a9
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic/openwrt-sdk-bcm53xx-generic_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+    - if: tag IS present # mipsel_mips32
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic/openwrt-sdk-brcm47xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # arm_cortex-a9_vfpv3
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9/openwrt-sdk-mvebu-cortexa9_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+    - if: tag IS present # aarch64_cortex-a72
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72/openwrt-sdk-mvebu-cortexa72_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # arm_cortex-a15_neon-vfpv4
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic/openwrt-sdk-ipq806x-generic_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+    - if: tag IS present # aarch64_generic
+      env: SDK_URL=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b/openwrt-sdk-layerscape-armv8_64b_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS present # mips64_octeonplus
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/octeon/generic/openwrt-sdk-octeon_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    - if: tag IS presnet # arc_arc700
+      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/arc770/generic/openwrt-sdk-arc770-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
+    - if: tag IS present # mips64_octeon
+      env: SDK_URL=http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic/openwrt-sdk-18.06.5-octeon_gcc-7.3.0_musl.Linux-x86_64.tar.xz
 before_install:
+  - export SDK_URL_PATH="$(dirname "$SDK_URL")"
+  - export SDK_NAME="$(basename "$SDK_URL")"
   - test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
   - cd "$DOWNLOAD_DIR"
-  - wget "${SDK_PATH}/sha256sums" -O sha256sums
   - |
-    if ! grep -- "$SDK" sha256sums > sha256sums.small 2>/dev/null ; then
+    if ! ( wget -q -O - "${SDK_URL_PATH}/sha256sums" | grep "$SDK" sha256sums > sha256sums.small 2>/dev/null ) ; then
       printf "\033[1;31m=== Can not find ${SDK} file in sha256sums.\033[m\n"
       exit 1
     fi
-  - export SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
   - |
     if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
-      wget "${SDK_PATH}/${SDK_FILE}" -O "$SDK_FILE"
+      wget -q -O "$SDK_NAME" "$SDK_URL"
       if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
         printf "\033[1;31m=== SDK can not be verified!\033[m\n"
         exit 1
       fi
     fi
-  - file "${DOWNLOAD_DIR}/${SDK_FILE}"
+  - file "${DOWNLOAD_DIR}/${SDK_NAME}"
 install:
   - test -d "${HOME}/dl" || mkdir -p "${HOME}/dl"
   - test -d "${HOME}/feeds" || mkdir -p "${HOME}/feeds"
   - export SDK_HOME="$(mktemp -d)"
-  - tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" -C "$SDK_HOME" --strip=1
+  - tar -Jxf "${DOWNLOAD_DIR}/${SDK_NAME}" -C "$SDK_HOME" --strip=1
   - cd "$SDK_HOME"
   - test -d "dl" && rm -rf dl || true
   - test -d "feeds" && rm -rf feeds || true
   - ln -s "${HOME}/dl/" dl
   - ln -s "${HOME}/feeds" feeds
-  - echo "src-git base https://github.com/openwrt/openwrt.git" >feeds.conf
-  - echo "src-git packages https://github.com/openwrt/packages.git" >>feeds.conf
-  - echo "src-git luci https://github.com/openwrt/luci.git" >>feeds.conf
-  - echo "src-git routing https://git.openwrt.org/feed/routing.git" >>feeds.conf
-  - echo "src-git telephony https://github.com/openwrt/telephony.git" >>feeds.conf
+  - cat feeds.conf.default >feeds.conf
+  - sed -i 's#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#' feeds.conf
+  - sed -i 's#git.openwrt.org/feed/packages#github.com/openwrt/packages#' feeds.conf
+  - sed -i 's#git.openwrt.org/project/luci#github.com/openwrt/luci#' feeds.conf
+  - sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.conf
   - ln -s "$TRAVIS_BUILD_DIR" "package/${PACKAGE}"
 before_script:
   - cd "$SDK_HOME"
   - ./scripts/feeds update -a
-  - test -d ./feeds/packages/net/v2ray-core && rm -rf ./feeds/packages/net/v2ray-core || true
+  - |
+    test -d ./feeds/packages/net/v2ray-core && \
+      rm -rf ./feeds/packages/net/v2ray-core || true
+  - |
+    test -d ./feeds/packages/lang/golang && \
+	    rm -rf ./feeds/packages/lang/golang || true
+  - |
+    curl https://codeload.github.com/openwrt/packages/tar.gz/master | \
+	    tar -xz -C ./feeds/packages/lang --strip=2 packages-master/lang/golang
   - ./scripts/feeds install -a
   - make defconfig
 script:
