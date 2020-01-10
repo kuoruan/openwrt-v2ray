@@ -162,3 +162,12 @@ deploy:
     tags: true
     all_branches: true
   token: $GITHUB_TOKEN
+after_deploy:
+  - |
+    if [ -n "$TRIGGER_URL" ] ; then
+      curl -X POST \
+        -H "Content-Type: application/json; charset=utf-8" \
+        -H "Authorization: Bearer $TRIGGER_TOKEN" \
+        -d "{\"github_user\":\"$GITHUB_USER\",\"github_repo\":\"$GITHUB_REPO\",\"branch\":\"$TRAVIS_BRANCH\",\"tag\":\"$TRAVIS_TAG\"}" \
+        "$TRIGGER_URL" || true
+    fi
