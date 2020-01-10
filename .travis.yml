@@ -43,10 +43,10 @@ matrix:
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72/openwrt-sdk-mvebu-cortexa72_gcc-8.3.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # aarch64_generic
       env: SDK_URL=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b/openwrt-sdk-layerscape-armv8_64b_gcc-8.3.0_musl.Linux-x86_64.tar.xz
-    - if: tag IS present # arc_arc700
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/arc770/generic/openwrt-sdk-arc770-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
-    - if: tag IS present # arc_archs
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/archs38/generic/openwrt-sdk-archs38-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
+    #- if: tag IS present # arc_arc700
+    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/arc770/generic/openwrt-sdk-arc770-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
+    #- if: tag IS present # arc_archs
+    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/archs38/generic/openwrt-sdk-archs38-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
     - if: tag IS present # arm_cortex-a9
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic/openwrt-sdk-bcm53xx-generic_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
     - if: tag IS present # arm_cortex-a9_vfpv3
@@ -73,8 +73,8 @@ matrix:
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/cns3xxx/generic/openwrt-sdk-cns3xxx_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
     - if: tag IS present # arm_xscale
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/kirkwood/generic/openwrt-sdk-kirkwood_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
-    - if: tag IS present # armeb_xscale
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic/openwrt-sdk-ixp4xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    #- if: tag IS present # armeb_xscale
+    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic/openwrt-sdk-ixp4xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # mips_24kc
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic/openwrt-sdk-ar71xx-generic_gcc-7.4.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # mips_mips32
@@ -87,10 +87,10 @@ matrix:
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic/openwrt-sdk-brcm47xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # mipsel_74kc
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm47xx/mips74k/openwrt-sdk-brcm47xx-mips74k_gcc-8.3.0_musl.Linux-x86_64.tar.xz
-    - if: tag IS present # powerpc_464fp
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/apm821xx/nand/openwrt-sdk-apm821xx-nand_gcc-8.3.0_musl.Linux-x86_64.tar.xz
-    - if: tag IS present # powerpc_8540
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mpc85xx/generic/openwrt-sdk-mpc85xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    #- if: tag IS present # powerpc_464fp
+    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/apm821xx/nand/openwrt-sdk-apm821xx-nand_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    #- if: tag IS present # powerpc_8540
+    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mpc85xx/generic/openwrt-sdk-mpc85xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # mips64_octeonplus
       env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/octeon/generic/openwrt-sdk-octeon_gcc-8.3.0_musl.Linux-x86_64.tar.xz
     - if: tag IS present # mips64_octeon
