@@ -26,8 +26,6 @@ addons:
 env:
   global:
     - PACKAGE=v2ray-core
-    - GITHUB_USER=kuoruan
-    - GITHUB_REPO=openwrt-v2ray
     - DOWNLOAD_DIR=${HOME}/files
     - CONFIG_CCACHE=y
 matrix:
@@ -150,6 +148,14 @@ script:
   - make package/${PACKAGE}/compile V=s
 after_success:
   - find "${SDK_HOME}/bin/" -type f -exec ls -lh {} \;
+  - |
+    if [ -n "$TRIGGER_URL" ] ; then
+      curl -X POST \
+        -H "Content-Type: application/json; charset=utf-8" \
+        -H "Authorization: Bearer $TRIGGER_TOKEN" \
+        -d "{\"event\":\"checked\",\"repo_slug\":\"$TRAVIS_REPO_SLUG\",\"branch\":\"$TRAVIS_BRANCH\",\"tag\":\"$TRAVIS_TAG\"}" \
+        "$TRIGGER_URL" || true
+    fi
 before_deploy:
   - find "${SDK_HOME}/bin/" -name v2*.ipk -exec cp {} "$TRAVIS_BUILD_DIR" \;
   - ls -hl "$TRAVIS_BUILD_DIR" | grep .*\.ipk
@@ -168,6 +174,6 @@ after_deploy:
       curl -X POST \
         -H "Content-Type: application/json; charset=utf-8" \
         -H "Authorization: Bearer $TRIGGER_TOKEN" \
-        -d "{\"github_user\":\"$GITHUB_USER\",\"github_repo\":\"$GITHUB_REPO\",\"branch\":\"$TRAVIS_BRANCH\",\"tag\":\"$TRAVIS_TAG\"}" \
+        -d "{\"event\":\"release\",\"repo_slug\":\"$TRAVIS_REPO_SLUG\",\"branch\":\"$TRAVIS_BRANCH\",\"tag\":\"$TRAVIS_TAG\"}" \
         "$TRIGGER_URL" || true
     fi
