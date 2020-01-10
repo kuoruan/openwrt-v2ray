@@ -70,7 +70,7 @@ define Package/v2ray-core
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Project V
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
 endef
 
 define Package/v2ray-core/config
