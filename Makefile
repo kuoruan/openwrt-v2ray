@@ -239,7 +239,7 @@ define Download/geosite.dat
 endef
 
 define Build/Prepare
-	$(Build/Prepare/Default)
+	$(call Build/Prepare/Default)
 
 ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 	# move file to make sure download new file every build
