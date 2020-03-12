@@ -1,4 +1,5 @@
 dist: xenial
+os: linux
 notifications:
   email: false
 language: c
