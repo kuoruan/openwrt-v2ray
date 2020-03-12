@@ -78,8 +78,8 @@ jobs:
           test -d ./feeds/packages/lang/golang && \
             rm -rf ./feeds/packages/lang/golang || true
         - |
-          curl https://codeload.github.com/openwrt/packages/tar.gz/master | \
-            tar -xz -C ./feeds/packages/lang --strip=2 packages-master/lang/golang
+          curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | \
+            tar -xz -C ./feeds/packages/lang --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
         - ./scripts/feeds install -a
         - make defconfig
       script:
