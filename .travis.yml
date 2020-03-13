@@ -13,16 +13,6 @@ cache:
 git:
   depth: 3
   submodules: false
-addons:
-  apt:
-    packages:
-      - subversion
-      - build-essential
-      - libncurses5-dev
-      - zlib1g-dev
-      - gettext
-      - libssl-dev
-      - zip
 env:
   global:
     - PACKAGE=v2ray-core
