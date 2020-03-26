@@ -22,32 +22,31 @@ jobs:
   include:
     - &compile-staging # x86-64
       stage: compile
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/64 SDK_NAME=-sdk-x86-64_
       before_install:
-        - export SDK_URL_PATH="$(dirname "$SDK_URL")"
-        - export SDK_NAME="$(basename "$SDK_URL")"
         - test -d "$DOWNLOAD_DIR" || mkdir -p "$DOWNLOAD_DIR"
         - cd "$DOWNLOAD_DIR"
         - |
-          if ! ( wget -q -O - "${SDK_URL_PATH}/sha256sums" | \
-            grep "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
+          if ! ( wget -q -O - "${SDK_PATH}/sha256sums" | \
+            grep -- "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
             echo "Can not find ${SDK_NAME} file in sha256sums."
             exit 1
           fi
+        - export SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
         - |
           if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
-            wget -q -O "$SDK_NAME" "$SDK_URL"
+            wget -q -O "$SDK_FILE" "$SDK_PATH/$SDK_FILE"
             if ! sha256sum -c ./sha256sums.small 2>/dev/null ; then
               echo "SDK can not be verified!"
               exit 1
             fi
           fi
-        - file "${DOWNLOAD_DIR}/${SDK_NAME}"
+        - file "${DOWNLOAD_DIR}/${SDK_FILE}"
       install:
         - test -d "${HOME}/dl" || mkdir -p "${HOME}/dl"
         - test -d "${HOME}/feeds" || mkdir -p "${HOME}/feeds"
         - export SDK_HOME="$(mktemp -d)"
-        - tar -Jxf "${DOWNLOAD_DIR}/${SDK_NAME}" -C "$SDK_HOME" --strip=1
+        - tar -Jxf "${DOWNLOAD_DIR}/${SDK_FILE}" -C "$SDK_HOME" --strip=1
         - cd "$SDK_HOME"
         - test -d "dl" && rm -rf dl || true
         - test -d "feeds" && rm -rf feeds || true
@@ -93,97 +92,97 @@ jobs:
         token: $GITHUB_TOKEN
     - <<: *compile-staging # i386_pentium
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/x86/legacy/openwrt-sdk-x86-legacy_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/legacy SDK_NAME=-sdk-x86-legacy_
     - <<: *compile-staging # i386_pentium4
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/x86/generic/openwrt-sdk-x86-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/x86/generic SDK_NAME=-sdk-x86-generic_
     - <<: *compile-staging # aarch64_cortex-a53
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710/openwrt-sdk-brcm2708-bcm2710_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710 SDK_NAME=-sdk-brcm2708-bcm2710_
     - <<: *compile-staging # aarch64_cortex-a72
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72/openwrt-sdk-mvebu-cortexa72_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72 SDK_NAME=-sdk-mvebu-cortexa72_
     - <<: *compile-staging # aarch64_generic
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b/openwrt-sdk-layerscape-armv8_64b_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b SDK_NAME=-sdk-layerscape-armv8_64b_
     #- <<: *compile-staging # arc_arc700
     #  if: tag IS present OR env(BUILD_ALL) = 1
-    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/arc770/generic/openwrt-sdk-arc770-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
+    #  env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/arc770/generic SDK_NAME=-sdk-arc770-generic_
     #- <<: *compile-staging # arc_archs
     #  if: tag IS present OR env(BUILD_ALL) = 1
-    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/archs38/generic/openwrt-sdk-archs38-generic_gcc-8.3.0_uClibc.Linux-x86_64.tar.xz
+    #  env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/archs38/generic SDK_NAME=-sdk-archs38-generic_
     - <<: *compile-staging # arm_cortex-a9
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic/openwrt-sdk-bcm53xx-generic_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic SDK_NAME=-sdk-bcm53xx-generic_
     - <<: *compile-staging # arm_cortex-a9_vfpv3
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9/openwrt-sdk-mvebu-cortexa9_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9 SDK_NAME=-sdk-mvebu-cortexa9_
     - <<: *compile-staging # arm_arm1176jzf-s_vfp
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2708/openwrt-sdk-brcm2708-bcm2708_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2708 SDK_NAME=-sdk-brcm2708-bcm2708_
     - <<: *compile-staging # arm_cortex-a7_neon-vfpv4
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709/openwrt-sdk-brcm2708-bcm2709_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709 SDK_NAME=-sdk-brcm2708-bcm2709_
     - <<: *compile-staging # arm_cortex-a15_neon-vfpv4
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic/openwrt-sdk-ipq806x-generic_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ipq806x/generic SDK_NAME=-sdk-ipq806x-generic_
     - <<: *compile-staging # arm_arm926ej-s
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/at91/legacy/openwrt-sdk-at91-legacy_gcc-7.4.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/at91/legacy SDK_NAME=-sdk-at91-legacy_
     - <<: *compile-staging # arm_cortex-a5_neon-vfpv4
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/at91/sama5/openwrt-sdk-at91-sama5_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/at91/sama5 SDK_NAME=-sdk-at91-sama5_
     - <<: *compile-staging # arm_cortex-a8_vfpv3
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/sunxi/cortexa8/openwrt-sdk-sunxi-cortexa8_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/sunxi/cortexa8 SDK_NAME=-sdk-sunxi-cortexa8_
     - <<: *compile-staging # arm_cortex-a9_neon
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/imx6/generic/openwrt-sdk-imx6_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/imx6/generic SDK_NAME=-sdk-imx6_
     - <<: *compile-staging # arm_fa526
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/gemini/generic/openwrt-sdk-gemini_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/gemini/generic SDK_NAME=-sdk-gemini_
     - <<: *compile-staging # arm_mpcore
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/oxnas/ox820/openwrt-sdk-oxnas-ox820_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/oxnas/ox820 SDK_NAME=-sdk-oxnas-ox820_
     - <<: *compile-staging # arm_mpcore_vfp
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/cns3xxx/generic/openwrt-sdk-cns3xxx_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/cns3xxx/generic SDK_NAME=-sdk-cns3xxx_
     - <<: *compile-staging # arm_xscale
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/kirkwood/generic/openwrt-sdk-kirkwood_gcc-8.3.0_musl_eabi.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/kirkwood/generic SDK_NAME=-sdk-kirkwood_
     #- <<: *compile-staging # armeb_xscale
     #  if: tag IS present OR env(BUILD_ALL) = 1
-    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic/openwrt-sdk-ixp4xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    #  env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic SDK_NAME=-sdk-ixp4xx-generic_
     - <<: *compile-staging # mips_24kc
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic/openwrt-sdk-ar71xx-generic_gcc-7.4.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ar71xx/generic SDK_NAME=-sdk-ar71xx-generic_
     - <<: *compile-staging # mips_mips32
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic/openwrt-sdk-brcm63xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic SDK_NAME=-sdk-brcm63xx-generic_
     - <<: *compile-staging # mipsel_24kc
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620/openwrt-sdk-ramips-mt7620_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/ramips/mt7620 SDK_NAME=-sdk-ramips-mt7620_
     - <<: *compile-staging # mipsel_24kc_24kf
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/pistachio/generic/openwrt-sdk-pistachio_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/pistachio/generic SDK_NAME=-sdk-pistachio_
     - <<: *compile-staging # mipsel_mips32
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic/openwrt-sdk-brcm47xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic SDK_NAME=-sdk-brcm47xx-generic_
     - <<: *compile-staging # mipsel_74kc
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/brcm47xx/mips74k/openwrt-sdk-brcm47xx-mips74k_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/brcm47xx/mips74k SDK_NAME=-sdk-brcm47xx-mips74k_
     #- <<: *compile-staging # powerpc_464fp
     #  if: tag IS present OR env(BUILD_ALL) = 1
-    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/apm821xx/nand/openwrt-sdk-apm821xx-nand_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    #  env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/apm821xx/nand SDK_NAME=-sdk-apm821xx-nand_
     #- <<: *compile-staging # powerpc_8540
     #  if: tag IS present OR env(BUILD_ALL) = 1
-    #  env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/mpc85xx/generic/openwrt-sdk-mpc85xx-generic_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+    #  env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/mpc85xx/generic SDK_NAME=-sdk-mpc85xx-generic_
     - <<: *compile-staging # mips64_octeonplus
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=https://downloads.openwrt.org/snapshots/targets/octeon/generic/openwrt-sdk-octeon_gcc-8.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=https://downloads.openwrt.org/snapshots/targets/octeon/generic SDK_NAME=-sdk-octeon_
     - <<: *compile-staging # mips64_octeon
       if: tag IS present OR env(BUILD_ALL) = 1
-      env: SDK_URL=http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic/openwrt-sdk-18.06.5-octeon_gcc-7.3.0_musl.Linux-x86_64.tar.xz
+      env: SDK_PATH=http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic SDK_NAME=-sdk-18.06.5-octeon_
     - stage: trigger checked
       if: tag IS blank
       script:
