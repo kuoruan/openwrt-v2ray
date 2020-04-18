@@ -50,6 +50,10 @@ opkg upgrade v2ray-core
 opkg install v2ray-core*.ipk
 ```
 
+Depends:
+
+* ca-certificates
+
 Bin files will install in ```/usr/bin```.
 
 ## Custom build
