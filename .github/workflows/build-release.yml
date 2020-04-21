@@ -2,7 +2,8 @@ name: Build and Release
 
 on:
   push:
-    tags: [*]
+    tags:
+      - '*'
 
 env:
   PACKAGE: v2ray-core
@@ -274,7 +275,7 @@ jobs:
             exit 1
           fi
 
-          file_name="[minimal]$(basename "$file_path")"
+          file_name="minimal.$(basename "$file_path")"
 
           cp -f "$file_path" "${{ github.workspace }}/$file_name"
 
@@ -283,7 +284,7 @@ jobs:
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
-          files: *.ipk
+          files: '*.ipk'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

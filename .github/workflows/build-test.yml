@@ -2,7 +2,8 @@ name: Build Test
 
 on:
   push:
-    tags-ignore: [*]
+    tags-ignore:
+      - '*'
   pull_request:
 
 env:
