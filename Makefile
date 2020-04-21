@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-core
 PKG_VERSION:=4.23.1
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/v2ray/v2ray-core/tar.gz/v$(PKG_VERSION)?
@@ -18,6 +18,10 @@ PKG_HASH:=474b3aeed069d9867f7603a0544abcc0f31386cef9254423577ab752fc8d4dcc
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Xingwang Liao <kuoruan@gmail.com>
+
+PKG_BUILD_DEPENDS:=golang/host V2RAY_COMPRESS_UPX:upx/host
+PKG_BUILD_PARALLEL:=1
+PKG_USE_MIPS16:=0
 
 PKG_CONFIG_DEPENDS := \
 	CONFIG_V2RAY_JSON_V2CTL \
@@ -49,10 +53,6 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_V2RAY_DISABLE_HTTP2_TRANS \
 	CONFIG_V2RAY_DISABLE_DOMAIN_SOCKET_TRANS \
 	CONFIG_V2RAY_DISABLE_QUIC_TRANS
-
-PKG_BUILD_DEPENDS:=golang/host
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
 
 GO_PKG:=v2ray.com/core
 GO_PKG_LDFLAGS:=-s -w
@@ -262,7 +262,7 @@ define Build/Compile
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
-	upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray
 endif
 
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
@@ -271,7 +271,7 @@ ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
-	upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 endif
 endif
 endef
