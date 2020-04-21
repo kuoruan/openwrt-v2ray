@@ -17,15 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - arch: x86-64
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/64
-            sdk_name: -sdk-x86-64_
-          - arch: i386_pentium
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/legacy
-            sdk_name: -sdk-x86-legacy_
-          - arch: i386_pentium4
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/generic
-            sdk_name: -sdk-x86-generic_
           - arch: aarch64_cortex-a53
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710
             sdk_name: -sdk-brcm2708-bcm2710_
@@ -35,39 +26,33 @@ jobs:
           - arch: aarch64_generic
             sdk_url_path: http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b
             sdk_name: -sdk-layerscape-armv8_64b_
-          # - arch: arc_arc700
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/arc770/generic
-          #   sdk_name: -sdk-arc770-generic_
-          # - arch: arc_archs
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/archs38/generic
-          #   sdk_name: -sdk-archs38-generic_
-          - arch: arm_cortex-a9
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic
-            sdk_name: -sdk-bcm53xx-generic_
-          - arch: arm_cortex-a9_vfpv3
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9
-            sdk_name: -sdk-mvebu-cortexa9_
           - arch: arm_arm1176jzf-s_vfp
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2708
             sdk_name: -sdk-brcm2708-bcm2708_
-          - arch: arm_cortex-a7_neon-vfpv4
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709
-            sdk_name: -sdk-brcm2708-bcm2709_
-          - arch: arm_cortex-a15_neon-vfpv4
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ipq806x/generic
-            sdk_name: -sdk-ipq806x-generic_
           - arch: arm_arm926ej-s
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/at91/legacy
             sdk_name: -sdk-at91-legacy_
-          - arch: arm_cortex-a5_neon-vfpv4
+          - arch: arm_cortex-a15_neon-vfpv4
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ipq806x/generic
+            sdk_name: -sdk-ipq806x-generic_
+          - arch: arm_cortex-a5-vfpv4
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/at91/sama5
             sdk_name: -sdk-at91-sama5_
+          - arch: arm_cortex-a7_neon-vfpv4
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709
+            sdk_name: -sdk-brcm2708-bcm2709_
           - arch: arm_cortex-a8_vfpv3
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/sunxi/cortexa8
             sdk_name: -sdk-sunxi-cortexa8_
+          - arch: arm_cortex-a9
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic
+            sdk_name: -sdk-bcm53xx-generic_
           - arch: arm_cortex-a9_neon
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/imx6/generic
             sdk_name: -sdk-imx6_
+          - arch: arm_cortex-a9_vfpv3-d16
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9
+            sdk_name: -sdk-mvebu-cortexa9_
           - arch: arm_fa526
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/gemini/generic
             sdk_name: -sdk-gemini_
@@ -80,39 +65,55 @@ jobs:
           - arch: arm_xscale
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/kirkwood/generic
             sdk_name: -sdk-kirkwood_
-          # - arch: armeb_xscale
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic
-          #   sdk_name: -sdk-ixp4xx-generic_
-          - arch: mips_24kc
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ar71xx/generic
-            sdk_name: -sdk-ar71xx-generic_
-          - arch: mips_mips32
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic
-            sdk_name: -sdk-brcm63xx-generic_
+          - arch: i386_pentium
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/legacy
+            sdk_name: -sdk-x86-legacy_
+          - arch: i386_pentium4
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/generic
+            sdk_name: -sdk-x86-generic_
+          - arch: mips64_octeon
+            sdk_url_path: http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic
+            sdk_name: -sdk-18.06.5-octeon_
+          - arch: mips64_octeonplus
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/octeon/generic
+            sdk_name: -sdk-octeon_
           - arch: mipsel_24kc
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ramips/mt7620
             sdk_name: -sdk-ramips-mt7620_
           - arch: mipsel_24kc_24kf
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/pistachio/generic
             sdk_name: -sdk-pistachio_
-          - arch: mipsel_mips32
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic
-            sdk_name: -sdk-brcm47xx-generic_
           - arch: mipsel_74kc
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm47xx/mips74k
             sdk_name: -sdk-brcm47xx-mips74k_
+          - arch: mipsel_mips32
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic
+            sdk_name: -sdk-brcm47xx-generic_
+          - arch: mips_24kc
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ar71xx/generic
+            sdk_name: -sdk-ar71xx-generic_
+          - arch: mips_mips32
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic
+            sdk_name: -sdk-brcm63xx-generic_
+          - arch: x86_64
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/64
+            sdk_name: -sdk-x86-64_
+          # - arch: arc_arc700
+          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/arc770/generic
+          #   sdk_name: -sdk-arc770-generic_
+          # - arch: arc_archs
+          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/archs38/generic
+          #   sdk_name: -sdk-archs38-generic_
+          # - arch: armeb_xscale
+          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic
+          #   sdk_name: -sdk-ixp4xx-generic_
           # - arch: powerpc_464fp
           #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/apm821xx/nand
           #   sdk_name: -sdk-apm821xx-nand_
           # - arch: powerpc_8540
           #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mpc85xx/generic
           #   sdk_name: -sdk-mpc85xx-generic_
-          - arch: mips64_octeonplus
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/octeon/generic
-            sdk_name: -sdk-octeon_
-          - arch: mips64_octeon
-            sdk_url_path: http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic
-            sdk_name: -sdk-18.06.5-octeon_
+
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
       SDK_NAME: ${{ matrix.sdk_name }}
