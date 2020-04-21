@@ -1,8 +1,9 @@
 name: Build Test
 
 on:
-  - push
-  - pull_request
+  push:
+    tags-ignore: [*]
+  pull_request:
 
 env:
   PACKAGE: v2ray-core
