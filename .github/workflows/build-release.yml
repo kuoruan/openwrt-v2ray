@@ -249,8 +249,6 @@ jobs:
 
           ls -lh "${{ github.workspace }}/$file_name"
 
-          echo "::set-output name=package_name::$file_name"
-
       - name: Build Minimal Package
         env:
           CONFIG_V2RAY_JSON_INTERNAL: y
@@ -283,14 +281,10 @@ jobs:
 
           ls -lh "${{ github.workspace }}/$file_name"
 
-          echo "::set-output name=package_name::$file_name"
-
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ${{ steps.copy_normal_package.outputs.package_name }}
-            ${{ steps.copy_minimal_package.outputs.package_name }}
+          files: "*.ipk"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
