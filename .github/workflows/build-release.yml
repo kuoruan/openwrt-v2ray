@@ -11,11 +11,11 @@ env:
 
 jobs:
   publish:
-    name: Publish ${{ matrix.build_type }} for ${{ matrix.arch }}
+    name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        build_type: [normal, minimal]
         include:
           - arch: x86-64
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/64
@@ -116,7 +116,6 @@ jobs:
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
       SDK_NAME: ${{ matrix.sdk_name }}
-      BUILD_MINIMAL: ${{ matrix.build_type == 'minimal' }}
       CONFIG_CCACHE: y
     steps:
       - name: Checkout
@@ -126,13 +125,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.CACHE_DIR }}
-          key: ${{ runner.os }}-openwrt-${{ matrix.build_type }}-${{ matrix.arch }}-${{ env.PACKAGE }}
+          key: ${{ runner.os }}-openwrt-${{ matrix.arch }}-${{ env.PACKAGE }}
 
       - name: Setup CCache
         uses: actions/cache@v1
         with:
           path: ~/.ccache
-          key: ${{ runner.os }}-ccache-${{ matrix.build_type }}-${{ matrix.arch }}-${{ env.PACKAGE }}
+          key: ${{ runner.os }}-ccache-${{ matrix.arch }}-${{ env.PACKAGE }}
 
       - name: Install Dependencies
         run: |
@@ -198,19 +197,6 @@ jobs:
 
           cd -
 
-      - name: Prepare Minimal Build
-        if: env.BUILD_MINIMAL == 'true'
-        run: |
-          cd "$SDK_HOME"
-
-          git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
-
-          echo "::set-env name=CONFIG_V2RAY_JSON_INTERNAL::y"
-          echo "::set-env name=CONFIG_V2RAY_EXCLUDE_V2CTL::y"
-          echo "::set-env name=CONFIG_V2RAY_EXCLUDE_ASSETS::y"
-          echo "::set-env name=CONFIG_V2RAY_COMPRESS_UPX::y"
-
-          cd -
       - name: Update and Install Packages
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
@@ -229,54 +215,84 @@ jobs:
 
           ln -s "${{ github.workspace }}" "package/$PACKAGE"
 
+          git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+
           ./scripts/feeds install -a
 
           cd -
 
-      - name: Build Package
+      - name: Build Normal Package
         run: |
           cd "$SDK_HOME"
 
           make defconfig
           make package/${PACKAGE}/{clean,compile} V=s
 
+          find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
+
           cd -
 
-      - name: Print Build Results
-        run: find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
-
-      - name: Copy Package
-        id: copy_package
+      - id: copy_normal_package
+        name: Copy Normal Package
         run: |
-          find "$SDK_HOME/bin/" -name ${PACKAGE}*.ipk -exec cp {} "${{ github.workspace }}" \
-          ls -hl "${{ github.workspace }}" | grep *.ipk
+          file_path="$(find "$SDK_HOME/bin/" -type f -name ${PACKAGE}*.ipk | head -n1)"
 
-          cd "${{ github.workspace }}"
+          if [ -z "$file_path" ] ; then
+            echo "::error::Can't find package file."
 
-          echo "::set-output name=package_name::$(ls *.ipk | grep $PACKAGE)"
+            exit 1
+          fi
+
+          file_name="$(basename "$file_path")"
+
+          cp -f "$file_path" "${{ github.workspace }}/$file_name"
+
+          ls -lh "${{ github.workspace }}/$file_name"
+
+          echo "::set-output name=package_name::$file_name"
+
+      - name: Build Minimal Package
+        env:
+          CONFIG_V2RAY_JSON_INTERNAL: y
+          CONFIG_V2RAY_EXCLUDE_V2CTL: y
+          CONFIG_V2RAY_EXCLUDE_ASSETS: y
+          CONFIG_V2RAY_COMPRESS_UPX: y
+        run: |
+          cd "$SDK_HOME"
+
+          make package/${PACKAGE}/{clean,compile} V=s
+
+          find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
 
           cd -
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+      - id: copy_minimal_package
+        name: Copy Minimal Package
+        run: |
+          file_path="$(find "$SDK_HOME/bin/" -type f -name ${PACKAGE}*.ipk | head -n1)"
 
-      - name: Upload Release Files
-        uses: actions/upload-release-asset@v1
+          if [ -z "$file_path" ] ; then
+            echo "::error::Can't find package file."
+
+            exit 1
+          fi
+
+          file_name="[minimal]$(basename "$file_path")"
+
+          cp -f "$file_path" "${{ github.workspace }}/$file_name"
+
+          ls -lh "${{ github.workspace }}/$file_name"
+
+          echo "::set-output name=package_name::$file_name"
+
+      - name: Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ steps.copy_normal_package.outputs.package_name }}
+            ${{ steps.copy_minimal_package.outputs.package_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.copy_package.outputs.package_name }}
-          asset_name: ${{ steps.copy_package.outputs.package_name }}
-          asset_content_type: application/octet-stream
 
   notify:
     name: Notify Release Publish

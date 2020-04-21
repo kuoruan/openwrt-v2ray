@@ -11,14 +11,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build ${{ matrix.build_type }}
-    strategy:
-      matrix:
-        build_type: [normal, minimal]
     env:
       SDK_URL_PATH: https://downloads.openwrt.org/snapshots/targets/x86/64
       SDK_NAME: -sdk-x86-64_
-      BUILD_MINIMAL: ${{ matrix.build_type == 'minimal' }}
       CONFIG_CCACHE: y
     steps:
       - name: Checkout
@@ -28,13 +23,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.CACHE_DIR }}
-          key: ${{ runner.os }}-openwrt-${{ matrix.build_type }}${{ env.SDK_NAME }}${{ env.PACKAGE }}
+          key: ${{ runner.os }}-openwrt${{ env.SDK_NAME }}${{ env.PACKAGE }}
 
       - name: Setup CCache
         uses: actions/cache@v1
         with:
           path: ~/.ccache
-          key: ${{ runner.os }}-ccache-${{ matrix.build_type }}${{ env.SDK_NAME }}${{ env.PACKAGE }}
+          key: ${{ runner.os }}-ccache${{ env.SDK_NAME }}${{ env.PACKAGE }}
 
       - name: Install Dependencies
         run: |
@@ -101,20 +96,6 @@ jobs:
 
           cd -
 
-      - name: Prepare Minimal Build
-        if: env.BUILD_MINIMAL == 'true'
-        run: |
-          cd "$SDK_HOME"
-
-          git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
-
-          echo "::set-env name=CONFIG_V2RAY_JSON_INTERNAL::y"
-          echo "::set-env name=CONFIG_V2RAY_EXCLUDE_V2CTL::y"
-          echo "::set-env name=CONFIG_V2RAY_EXCLUDE_ASSETS::y"
-          echo "::set-env name=CONFIG_V2RAY_COMPRESS_UPX::y"
-
-          cd -
-
       - name: Update and Install Packages
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
@@ -133,21 +114,37 @@ jobs:
 
           ln -s "${{ github.workspace }}" "package/$PACKAGE"
 
+          git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+
           ./scripts/feeds install -a
 
           cd -
 
-      - name: Build Package
+      - name: Build Normal Package
         run: |
           cd "$SDK_HOME"
 
           make defconfig
           make package/${PACKAGE}/{clean,compile} V=s
 
+          find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
+
           cd -
 
-      - name: Print Build Results
-        run: find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
+      - name: Build Minimal Package
+        env:
+          CONFIG_V2RAY_JSON_INTERNAL: y
+          CONFIG_V2RAY_EXCLUDE_V2CTL: y
+          CONFIG_V2RAY_EXCLUDE_ASSETS: y
+          CONFIG_V2RAY_COMPRESS_UPX: y
+        run: |
+          cd "$SDK_HOME"
+
+          make package/${PACKAGE}/{clean,compile} V=s
+
+          find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
+
+          cd -
 
   notify:
     name: Notify Build Pass
