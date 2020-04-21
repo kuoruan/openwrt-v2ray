@@ -83,6 +83,14 @@ make package/v2ray-core/{clean,compile} V=s
 
 - You can custom the features in "V2Ray Configuration" option.
 
+3. UPX Compress
+
+If you want to build with UPX compress, the UPX package is required.
+
+```sh
+git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+```
+
 ## Uninstall
 
 ```sh
