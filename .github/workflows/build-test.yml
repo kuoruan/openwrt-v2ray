@@ -1,0 +1,171 @@
+name: Build Test
+
+on:
+  - push
+  - pull_request
+
+env:
+  PACKAGE: v2ray-core
+  CACHE_DIR: ~/cache
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build ${{ matrix.build_type }}
+    strategy:
+      matrix:
+        build_type: [normal, minimal]
+    env:
+      SDK_URL_PATH: https://downloads.openwrt.org/snapshots/targets/x86/64
+      SDK_NAME: -sdk-x86-64_
+      BUILD_MINIMAL: ${{ matrix.build_type == 'minimal' }}
+      CONFIG_CCACHE: y
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Cache
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: ${{ runner.os }}-openwrt-${{ matrix.build_type }}${{ env.SDK_NAME }}${{ env.PACKAGE }}
+
+      - name: Setup CCache
+        uses: actions/cache@v1
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.build_type }}${{ env.SDK_NAME }}${{ env.PACKAGE }}
+
+      - name: Install Dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive \
+          sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
+
+      - name: Create Directories
+        run: |
+          CACHE_DIR_SDK="$(eval echo "$CACHE_DIR/sdk")"
+          CACHE_DIR_DL="$(eval echo "$CACHE_DIR/dl")"
+          CACHE_DIR_FEEDS="$(eval echo "$CACHE_DIR/feeds")"
+
+          echo "CACHE_DIR_SDK: $CACHE_DIR_SDK"
+          echo "CACHE_DIR_DL: $CACHE_DIR_DL"
+          echo "CACHE_DIR_FEEDS: $CACHE_DIR_FEEDS"
+
+          test -d "$CACHE_DIR_SDK" || mkdir -p "$CACHE_DIR_SDK"
+          test -d "$CACHE_DIR_DL" || mkdir -p "$CACHE_DIR_DL"
+          test -d "$CACHE_DIR_FEEDS" || mkdir -p "$CACHE_DIR_FEEDS"
+
+          echo "::set-env name=CACHE_DIR_SDK::$CACHE_DIR_SDK"
+          echo "::set-env name=CACHE_DIR_DL::$CACHE_DIR_DL"
+          echo "::set-env name=CACHE_DIR_FEEDS::$CACHE_DIR_FEEDS"
+
+          echo "::set-env name=SDK_HOME::$(mktemp -d)"
+
+      - name: Download and Unzip SDK
+        run: |
+          cd "$CACHE_DIR_SDK"
+
+          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | \
+            grep -- "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
+            echo "::error::Can not find ${SDK_NAME} file in sha256sums."
+            exit 1
+          fi
+
+          SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
+          if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
+            wget -q -O "$SDK_FILE" "$SDK_URL_PATH/$SDK_FILE"
+            if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
+              echo "::error::SDK can not be verified!"
+              exit 1
+            fi
+          fi
+
+          cd -
+
+          file "$CACHE_DIR_SDK/$SDK_FILE"
+          tar -Jxf "$CACHE_DIR_SDK/$SDK_FILE" -C "$SDK_HOME" --strip=1
+
+          cd "$SDK_HOME"
+
+          test -d "dl" && rm -rf "dl" || true
+          test -d "feeds" && rm -rf "feeds" || true
+
+          ln -s "$CACHE_DIR_DL" "dl"
+          ln -s "$CACHE_DIR_FEEDS" "feeds"
+
+          cp feeds.conf.default feeds.conf
+          sed -i 's#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#' feeds.conf
+          sed -i 's#git.openwrt.org/feed/packages#github.com/openwrt/packages#' feeds.conf
+          sed -i 's#git.openwrt.org/project/luci#github.com/openwrt/luci#' feeds.conf
+          sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.conf
+
+          cd -
+
+      - name: Prepare Minimal Build
+        if: env.BUILD_MINIMAL == 'true'
+        run: |
+          cd "$SDK_HOME"
+
+          git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+
+          echo "::set-env name=CONFIG_V2RAY_JSON_INTERNAL::y"
+          echo "::set-env name=CONFIG_V2RAY_EXCLUDE_V2CTL::y"
+          echo "::set-env name=CONFIG_V2RAY_EXCLUDE_ASSETS::y"
+          echo "::set-env name=CONFIG_V2RAY_COMPRESS_UPX::y"
+
+          cd -
+
+      - name: Update and Install Packages
+        env:
+          OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
+        run: |
+          cd "$SDK_HOME"
+
+          ./scripts/feeds update -a
+
+          test -d "feeds/packages/net/$PACKAGE" && \
+            rm -rf "feeds/packages/net/$PACKAGE" || true
+          test -d "feeds/packages/lang/golang" && \
+            rm -rf "feeds/packages/lang/golang" || true
+
+          curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | \
+            tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
+
+          ln -s "${{ github.workspace }}" "package/$PACKAGE"
+
+          ./scripts/feeds install -a
+
+          cd -
+
+      - name: Build Package
+        run: |
+          cd "$SDK_HOME"
+
+          make defconfig
+          make package/${PACKAGE}/{clean,compile} V=s
+
+          cd -
+
+      - name: Print Build Results
+        run: find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
+
+  notify:
+    name: Notify Build Pass
+    runs-on: ubuntu-latest
+    env:
+      TRIGGER_URL: ${{ secrets.TRIGGER_URL }}
+      TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
+    needs: build
+    steps:
+      - name: Notify Jenkins
+        run: |
+          if [ -z "$TRIGGER_URL" ] ; then
+            echo "::warning::No trigger url found, skip..."
+            exit 0
+          fi
+
+          curl -X POST \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -H "Authorization: Bearer $TRIGGER_TOKEN" \
+              -d "{\"event\":\"build\",\"repository\":\"${{ github.repository }}\",\"ref\":\"${{ github.ref }}\"}" \
+              "$TRIGGER_URL" || true
