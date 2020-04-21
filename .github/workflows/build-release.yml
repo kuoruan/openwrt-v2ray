@@ -305,5 +305,5 @@ jobs:
           curl -X POST \
               -H "Content-Type: application/json; charset=utf-8" \
               -H "Authorization: Bearer $TRIGGER_TOKEN" \
-              -d "{\"event\":\"release\",\"repository\":\"${{ github.repository }}\",\"tag\":\"${{ github.ref }}\"}" \
+              -d "{\"event\":\"release\",\"repository\":\"${{ github.repository }}\",\"ref\":\"${{ github.ref }}\"}" \
               "$TRIGGER_URL" || true
