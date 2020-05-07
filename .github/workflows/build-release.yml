@@ -51,8 +51,8 @@ jobs:
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/imx6/generic
             sdk_name: -sdk-imx6_
           - arch: arm_cortex-a9_vfpv3
-            sdk_url_path: https://downloads.openwrt.org/19.07.2/targets/mvebu/cortexa9
-            sdk_name: -sdk-mvebu-cortexa9_
+            sdk_url_path: https://downloads.openwrt.org/releases/19.07.2/targets/mvebu/cortexa9
+            sdk_name: -sdk-19.07.2-mvebu-cortexa9_
           - arch: arm_cortex-a9_vfpv3-d16
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9
             sdk_name: -sdk-mvebu-cortexa9_
