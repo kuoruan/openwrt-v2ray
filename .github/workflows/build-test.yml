@@ -9,7 +9,7 @@ on:
   pull_request:
 
 env:
-  PACKAGE: v2ray-core
+  PACKAGE_NAME: v2ray-core
   CACHE_DIR: ~/cache
 
 jobs:
@@ -18,22 +18,26 @@ jobs:
     env:
       SDK_URL_PATH: https://downloads.openwrt.org/snapshots/targets/x86/64
       SDK_NAME: -sdk-x86-64_
+      ARCH: x86_64
+      CCACHE_DIR: ~/.ccache
       CONFIG_CCACHE: y
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Prepare Cache Key
+        id: cache_key
+        run: echo "::set-output name=timestamp::$(date +"%s")"
+
       - name: Setup Cache
         uses: actions/cache@v1
         with:
-          path: ${{ env.CACHE_DIR }}
-          key: ${{ runner.os }}-openwrt${{ env.SDK_NAME }}${{ env.PACKAGE }}
-
-      - name: Setup CCache
-        uses: actions/cache@v1
-        with:
-          path: ~/.ccache
-          key: ${{ runner.os }}-ccache${{ env.SDK_NAME }}${{ env.PACKAGE }}
+          path: |
+            ${{ env.CACHE_DIR }}
+            ${{ env.CCACHE_DIR }}
+          key: openwrt-${{ env.ARCH }}-${{ env.PACKAGE_NAME }}-${{ steps.cache_key.outputs.timestamp }}
+          restore-keys: |
+            openwrt-${{ env.ARCH }}-${{ env.PACKAGE_NAME }}-
 
       - name: Install Dependencies
         run: |
@@ -108,15 +112,15 @@ jobs:
 
           ./scripts/feeds update -a
 
-          test -d "feeds/packages/net/$PACKAGE" && \
-            rm -rf "feeds/packages/net/$PACKAGE" || true
+          test -d "feeds/packages/net/$PACKAGE_NAME" && \
+            rm -rf "feeds/packages/net/$PACKAGE_NAME" || true
           test -d "feeds/packages/lang/golang" && \
             rm -rf "feeds/packages/lang/golang" || true
 
           curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | \
             tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
 
-          ln -s "${{ github.workspace }}" "package/$PACKAGE"
+          ln -s "${{ github.workspace }}" "package/$PACKAGE_NAME"
 
           git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
 
@@ -129,7 +133,7 @@ jobs:
           cd "$SDK_HOME"
 
           make defconfig
-          make package/${PACKAGE}/{clean,compile} V=s
+          make package/${PACKAGE_NAME}/{clean,compile} V=s
 
           find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
 
@@ -144,7 +148,7 @@ jobs:
         run: |
           cd "$SDK_HOME"
 
-          make package/${PACKAGE}/{clean,compile} V=s
+          make package/${PACKAGE_NAME}/{clean,compile} V=s
 
           find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
 
