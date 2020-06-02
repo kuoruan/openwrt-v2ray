@@ -265,7 +265,7 @@ jobs:
         run: |
           cd "$SDK_HOME"
 
-          make package/${PACKAGE}/{clean,compile} V=s
+          make package/${PACKAGE_NAME}/{clean,compile} V=s
 
           find "$SDK_HOME/bin/" -type f -exec ls -lh {} \;
 
