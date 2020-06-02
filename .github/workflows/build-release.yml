@@ -10,7 +10,7 @@ env:
   CACHE_DIR: ~/cache
 
 jobs:
-  publish:
+  release:
     name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
@@ -239,7 +239,7 @@ jobs:
 
           cd -
 
-      -  name: Copy Bin Files
+      - name: Copy Bin Files
         run: |
           find "$SDK_HOME/bin/" -type f -name "${PACKAGE_NAME}*.ipk" -exec cp {} "${{ github.workspace }}" \;
 
