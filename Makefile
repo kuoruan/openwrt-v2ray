@@ -72,7 +72,7 @@ define Package/v2ray-core/Default
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
 endef
 
-define Package/v2ray-core/description
+define Package/v2ray-core/Default/description
   Project V is a set of network tools that help you to build your own computer network.
   It secures your network connections and thus protects your privacy.
 endef
@@ -84,6 +84,11 @@ $(call Package/v2ray-core/Default)
 	PROVIDES:=v2ray
 endef
 
+define Package/v2ray-core/description
+$(call Package/v2ray-core/Default/description)
+  This package contains v2ray, v2ctl, geoip.dat and geosite.dat.
+endef
+
 define Package/v2ray-core-mini
 $(call Package/v2ray-core/Default)
   TITLE+= (Minimal)
@@ -91,136 +96,139 @@ $(call Package/v2ray-core/Default)
 	PROVIDES:=v2ray
 endef
 
+define Package/v2ray-core-mini/description
+$(call Package/v2ray-core/Default/description)
+  This package contains only v2ray.
+endef
+
 define Package/v2ray-core-mini/config
 	source "$(SOURCE)/Config-mini.in"
 endef
 
-V2RAY_MINI_SED_ARGS:=
-
-ifeq ($(BUILD_VARIANT),mini)
+V2RAY_SED_ARGS:=
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_internal),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/main\/json"/\/\/ &/; \
 	/\/\/ _ "v2ray.com\/core\/main\/jsonem"/s/\/\/ //;
-else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_JSON_NONE),y)
-V2RAY_MINI_SED_ARGS += \
+else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_none),y)
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/main\/json"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features),y)
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/app\/dns"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/app\/log"/\/\/ &/; \
 	s/_ "v2ray.com\/core\/app\/log\/command"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_policy),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/app\/policy"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_reverse),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/app\/reverse"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_routing),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/app\/router"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_statistics),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/app\/stats"/\/\/ &/; \
 	s/_ "v2ray.com\/core\/app\/stats\/command"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_blackhole_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/blackhole"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns_proxy),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/dns"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dokodemo_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/dokodemo"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_freedom_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/freedom"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mtproto_proxy),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/mtproto"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/http"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_shadowsocks_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/shadowsocks"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_socks_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/socks"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_vmess_proto),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/proxy\/vmess\/inbound"/\/\/ &/; \
 	s/_ "v2ray.com\/core\/proxy\/vmess\/outbound"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tcp_trans),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/tcp"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/kcp"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_websocket_trans),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/websocket"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http2_trans),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/http"/\/\/ &/; \
 	s/_ "v2ray.com\/core\/transport\/internet\/headers\/http"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_domain_socket_trans),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/domainsocket"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans),y)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/quic"/\/\/ &/;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans)$(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans),yy)
-V2RAY_MINI_SED_ARGS += \
+V2RAY_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/headers\/noop"/\/\/ &/; \
 	s/_ "v2ray.com\/core\/transport\/internet\/headers\/srtp"/\/\/ &/; \
 	s/_ "v2ray.com\/core\/transport\/internet\/headers\/tls"/\/\/ &/; \
@@ -229,9 +237,7 @@ V2RAY_MINI_SED_ARGS += \
 	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wireguard"/\/\/ &/;
 endif
 
-endif
-
-endif
+endif # custom features
 
 GEOIP_VER:=latest
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
@@ -262,10 +268,10 @@ ifneq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_exclude_assets),y)
 	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
 endif
 
-ifneq ($(V2RAY_MINI_SED_ARGS),)
+ifneq ($(V2RAY_SED_ARGS),)
 	( \
 		sed -i \
-			'$(V2RAY_MINI_SED_ARGS)' \
+			'$(V2RAY_SED_ARGS)' \
 			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
 	)
 endif
