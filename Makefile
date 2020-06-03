@@ -83,8 +83,8 @@ define Package/v2ray-core
 $(call Package/v2ray-core/Default)
   TITLE+= (Full)
   VARIANT:=full
-	DEFAULT_VARIANT:=1
-	PROVIDES:=v2ray
+  DEFAULT_VARIANT:=1
+  PROVIDES:=v2ray
 endef
 
 define Package/v2ray-core/description
@@ -96,7 +96,7 @@ define Package/v2ray-core-mini
 $(call Package/v2ray-core/Default)
   TITLE+= (Minimal)
   VARIANT:=mini
-	PROVIDES:=v2ray
+  PROVIDES:=v2ray
 endef
 
 define Package/v2ray-core-mini/description
