@@ -29,12 +29,12 @@ config PACKAGE_v2ray_mini_compress_upx
 	bool "Compress executable files with UPX"
 	default y
 
-config PACKAGE_v2ray_custom_features
+config PACKAGE_v2ray_mini_custom_features
 	bool "Custom Features"
 	default n
 
 menu "Features Configuration"
-	depends on PACKAGE_v2ray_custom_features
+	depends on PACKAGE_v2ray_mini_custom_features
 
 config PACKAGE_v2ray_mini_without_dns
 	bool "Without Internal DNS Support"
@@ -42,6 +42,14 @@ config PACKAGE_v2ray_mini_without_dns
 
 config PACKAGE_v2ray_mini_without_log
 	bool "Without Log Support"
+	default n
+
+config PACKAGE_v2ray_mini_without_tls
+	bool "Without TLS Support"
+	default n
+
+config PACKAGE_v2ray_mini_without_udp
+	bool "Without UDP Support"
 	default n
 
 config PACKAGE_v2ray_mini_without_policy

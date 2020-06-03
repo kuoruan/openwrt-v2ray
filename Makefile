@@ -19,7 +19,7 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Xingwang Liao <kuoruan@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host PACKAGE_v2ray_$(BUILD_VARIANT)_compress_upx:upx/host
+PKG_BUILD_DEPENDS:=golang/host PACKAGE_v2ray-core-mini:upx/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -33,6 +33,8 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log \
+	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tls \
+	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_udp \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_policy \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_reverse \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_routing \
@@ -81,6 +83,7 @@ define Package/v2ray-core
 $(call Package/v2ray-core/Default)
   TITLE+= (Full)
   VARIANT:=full
+	DEFAULT_VARIANT:=1
 	PROVIDES:=v2ray
 endef
 
@@ -109,132 +112,142 @@ V2RAY_SED_ARGS:=
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_internal),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/main\/json"/\/\/ &/; \
-	/\/\/ _ "v2ray.com\/core\/main\/jsonem"/s/\/\/ //;
+	s,_ "v2ray.com/core/main/json",// &,; \
+	s,// \(_ "v2ray.com/core/main/jsonem"\),\1,;
 else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_none),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/main\/json"/\/\/ &/;
+	s,_ "v2ray.com/core/main/json",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features),y)
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/dns"/\/\/ &/;
+	s,_ "v2ray.com/core/app/dns",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/log"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/app\/log\/command"/\/\/ &/;
+	s,_ "v2ray.com/core/app/log",// &,; \
+	s,_ "v2ray.com/core/app/log/command",// &,;
+endif
+
+ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tls),y)
+V2RAY_SED_ARGS += \
+	s,_ "v2ray.com/core/transport/internet/tls",// &,;
+endif
+
+ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_udp),y)
+V2RAY_SED_ARGS += \
+	s,_ "v2ray.com/core/transport/internet/udp",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_policy),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/policy"/\/\/ &/;
+	s,_ "v2ray.com/core/app/policy",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_reverse),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/reverse"/\/\/ &/;
+	s,_ "v2ray.com/core/app/reverse",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_routing),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/router"/\/\/ &/;
+	s,_ "v2ray.com/core/app/router",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_statistics),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/app\/stats"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/app\/stats\/command"/\/\/ &/;
+	s,_ "v2ray.com/core/app/stats",// &,; \
+	s,_ "v2ray.com/core/app/stats/command",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_blackhole_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/blackhole"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/blackhole",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns_proxy),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/dns"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/dns",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dokodemo_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/dokodemo"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/dokodemo",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_freedom_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/freedom"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/freedom",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mtproto_proxy),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/mtproto"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/mtproto",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/http"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/http",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_shadowsocks_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/shadowsocks"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/shadowsocks",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_socks_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/socks"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/socks",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_vmess_proto),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/proxy\/vmess\/inbound"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/proxy\/vmess\/outbound"/\/\/ &/;
+	s,_ "v2ray.com/core/proxy/vmess/inbound",// &,; \
+	s,_ "v2ray.com/core/proxy/vmess/outbound",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tcp_trans),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/tcp"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/tcp",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/kcp"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/kcp",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_websocket_trans),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/websocket"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/websocket",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http2_trans),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/http"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/http"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/http",// &,; \
+	s,_ "v2ray.com/core/transport/internet/headers/http",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_domain_socket_trans),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/domainsocket"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/domainsocket",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans),y)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/quic"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/quic",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans)$(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans),yy)
 V2RAY_SED_ARGS += \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/noop"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/srtp"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/tls"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/utp"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wechat"/\/\/ &/; \
-	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wireguard"/\/\/ &/;
+	s,_ "v2ray.com/core/transport/internet/headers/noop",// &,; \
+	s,_ "v2ray.com/core/transport/internet/headers/srtp",// &,; \
+	s,_ "v2ray.com/core/transport/internet/headers/tls",// &,; \
+	s,_ "v2ray.com/core/transport/internet/headers/utp",// &,; \
+	s,_ "v2ray.com/core/transport/internet/headers/wechat",// &,; \
+	s,_ "v2ray.com/core/transport/internet/headers/wireguard",// &,;
 endif
 
 endif # custom features
@@ -270,7 +283,7 @@ endif
 
 ifneq ($(V2RAY_SED_ARGS),)
 	( \
-		sed -i \
+		$(SED) \
 			'$(V2RAY_SED_ARGS)' \
 			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
 	)
