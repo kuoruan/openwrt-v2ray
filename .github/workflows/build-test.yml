@@ -34,7 +34,7 @@ jobs:
         with:
           path: |
             ${{ env.CACHE_DIR }}
-            ${{ env.CCACHE_DIR }}
+            ~/.ccache
           key: openwrt-${{ env.ARCH }}-${{ env.PACKAGE_NAME }}-${{ steps.cache_key.outputs.timestamp }}
           restore-keys: |
             openwrt-${{ env.ARCH }}-${{ env.PACKAGE_NAME }}-
