@@ -30,11 +30,11 @@ jobs:
         run: echo "::set-output name=timestamp::$(date +"%s")"
 
       - name: Setup Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: |
             ${{ env.CACHE_DIR }}
-            ~/.ccache
+            ${{ env.CCACHE_DIR }}
           key: openwrt-${{ env.ARCH }}-${{ env.PACKAGE_NAME }}-${{ steps.cache_key.outputs.timestamp }}
           restore-keys: |
             openwrt-${{ env.ARCH }}-${{ env.PACKAGE_NAME }}-
