@@ -18,8 +18,8 @@ jobs:
       matrix:
         include:
           - arch: aarch64_cortex-a53
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2710
-            sdk_name: -sdk-brcm2708-bcm2710_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2710
+            sdk_name: -sdk-bcm27xx-bcm2710_
           - arch: aarch64_cortex-a72
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa72
             sdk_name: -sdk-mvebu-cortexa72_
@@ -27,8 +27,8 @@ jobs:
             sdk_url_path: http://downloads.openwrt.org/snapshots/targets/layerscape/armv8_64b
             sdk_name: -sdk-layerscape-armv8_64b_
           - arch: arm_arm1176jzf-s_vfp
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2708
-            sdk_name: -sdk-brcm2708-bcm2708_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2708
+            sdk_name: -sdk-bcm27xx-bcm2708_
           - arch: arm_arm926ej-s
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/at91/legacy
             sdk_name: -sdk-at91-legacy_
@@ -39,8 +39,8 @@ jobs:
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/at91/sama5
             sdk_name: -sdk-at91-sama5_
           - arch: arm_cortex-a7_neon-vfpv4
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm2708/bcm2709
-            sdk_name: -sdk-brcm2708-bcm2709_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2709
+            sdk_name: -sdk-bcm27xx-bcm2709_
           - arch: arm_cortex-a8_vfpv3
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/sunxi/cortexa8
             sdk_name: -sdk-sunxi-cortexa8_
@@ -87,17 +87,17 @@ jobs:
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/pistachio/generic
             sdk_name: -sdk-pistachio_
           - arch: mipsel_74kc
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm47xx/mips74k
-            sdk_name: -sdk-brcm47xx-mips74k_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm47xx/mips74k
+            sdk_name: -sdk-bcm47xx-mips74k_
           - arch: mipsel_mips32
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm47xx/generic
-            sdk_name: -sdk-brcm47xx-generic_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm47xx/generic
+            sdk_name: -sdk-bcm47xx-generic_
           - arch: mips_24kc
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ar71xx/generic
-            sdk_name: -sdk-ar71xx-generic_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ath79/generic
+            sdk_name: -sdk-ath79-generic_
           - arch: mips_mips32
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/brcm63xx/generic
-            sdk_name: -sdk-brcm63xx-generic_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm63xx/generic
+            sdk_name: -sdk-bcm63xx-generic_
           - arch: x86_64
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/64
             sdk_name: -sdk-x86-64_
