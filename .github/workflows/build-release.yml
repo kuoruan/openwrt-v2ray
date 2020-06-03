@@ -258,7 +258,7 @@ jobs:
     env:
       TRIGGER_URL: ${{ secrets.TRIGGER_URL }}
       TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
-    needs: publish
+    needs: release
     steps:
       - name: Notify Jenkins
         run: |
