@@ -24,13 +24,20 @@ echo "src/gz kuoruan_packages http://openwrt.kuoruan.net/packages/releases/$(. /
   >> /etc/opkg/customfeeds.conf
 ```
 
-replace ```http://``` with ```https://``` if you like.
+> Replace `http://` with `https://` if you like.
 
 3. Install package:
 
 ```sh
 opkg update
 opkg install v2ray-core
+```
+
+For minimal package:
+
+```sh
+opkg update
+opkg install v2ray-core-mini
 ```
 
 4. Upgrade package:
@@ -54,7 +61,7 @@ Depends:
 
 * ca-certificates
 
-Bin files will install in ```/usr/bin```.
+Bin files will install in `/usr/bin`.
 
 ## Custom build
 
@@ -66,7 +73,7 @@ Bin files will install in ```/usr/bin```.
 git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray-core
 ```
 
-> For Chinese users, ```export GOPROXY=https://goproxy.io``` before build.
+> For Chinese users, `export GOPROXY=https://goproxy.io` before build.
 
 Start build:
 
@@ -78,10 +85,12 @@ make menuconfig
 
 Network ---> Project V ---> <*> v2ray-core
 
+Network ---> Project V ---> <M> v2ray-core-mini
+
 make package/v2ray-core/{clean,compile} V=s
 ```
 
-- You can custom the features in "V2Ray Configuration" option.
+- You can custom the features in `V2Ray Mini Configuration` option.
 
 3. UPX Compress
 
@@ -94,5 +103,5 @@ git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package
 ## Uninstall
 
 ```sh
-opkg remove v2ray-core
+opkg remove v2ray-core # v2ray-core-mini
 ```
