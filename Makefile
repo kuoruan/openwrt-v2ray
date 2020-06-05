@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/v2ray/v2ray-core/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=b401f98cabe849033966acb1c6132ae4d6b178ab45330543be3b2356c8348d10
+PKG_HASH:=726dd98d674bd73150158b1d4c8bc0d59dbb672ba10096ac61548d6278213c78
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -66,8 +66,8 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/v2ray-core/Default
-  TITLE:=A platform for building proxies
-  URL:=https://www.v2ray.com
+  TITLE:=A platform for building proxies to bypass network restrictions.
+  URL:=https://www.v2fly.org
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Project V
