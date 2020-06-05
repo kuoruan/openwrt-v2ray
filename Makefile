@@ -12,7 +12,7 @@ PKG_VERSION:=4.23.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/v2ray/v2ray-core/tar.gz/v$(PKG_VERSION)?
+PKG_SOURCE_URL:=https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$(PKG_VERSION)?
 PKG_HASH:=726dd98d674bd73150158b1d4c8bc0d59dbb672ba10096ac61548d6278213c78
 
 PKG_LICENSE:=MIT
