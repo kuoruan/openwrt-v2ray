@@ -159,11 +159,11 @@ jobs:
           test -d "$CACHE_DIR_DL" || mkdir -p "$CACHE_DIR_DL"
           test -d "$CACHE_DIR_FEEDS" || mkdir -p "$CACHE_DIR_FEEDS"
 
-          echo "::set-env name=CACHE_DIR_SDK::$CACHE_DIR_SDK"
-          echo "::set-env name=CACHE_DIR_DL::$CACHE_DIR_DL"
-          echo "::set-env name=CACHE_DIR_FEEDS::$CACHE_DIR_FEEDS"
+          echo "CACHE_DIR_SDK=$CACHE_DIR_SDK" >> $GITHUB_ENV
+          echo "CACHE_DIR_DL=$CACHE_DIR_DL" >> $GITHUB_ENV
+          echo "CACHE_DIR_FEEDS=$CACHE_DIR_FEEDS" >> $GITHUB_ENV
 
-          echo "::set-env name=SDK_HOME::$(mktemp -d)"
+          echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
 
       - name: Download and Unzip SDK
         run: |
