@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  PACKAGE_NAME: v2ray-core
+  PACKAGE_NAME: xray-core
   CACHE_DIR: ~/cache
 
 jobs:

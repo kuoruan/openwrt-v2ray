@@ -1,0 +1,112 @@
+menu "XRAY Configuration"
+
+config PACKAGE_xray_include_geo_data
+	bool "Include geoip.dat & geosite.dat"
+	default y
+
+config PACKAGE_xray_compress_upx
+	bool "Compress executable files with UPX"
+	default y
+
+config PACKAGE_xray_custom_features
+	bool "Custom Features"
+	default n
+
+menu "Features Configuration"
+	depends on PACKAGE_xray_custom_features
+
+config PACKAGE_xray_without_dns
+	bool "Without Internal DNS Support"
+	default n
+
+config PACKAGE_xray_without_log
+	bool "Without Log Support"
+	default n
+
+config PACKAGE_xray_without_tls
+	bool "Without TLS Support"
+	default n
+
+config PACKAGE_xray_without_udp
+	bool "Without UDP Support"
+	default n
+
+config PACKAGE_xray_without_policy
+	bool "Without Local Policy Support"
+	default n
+
+config PACKAGE_xray_without_reverse
+	bool "Without Reverse Proxy Support"
+	default n
+
+config PACKAGE_xray_without_routing
+	bool "Without Internal Routing Support"
+	default n
+
+config PACKAGE_xray_without_statistics
+	bool "Without Statistics Support"
+	default n
+
+config PACKAGE_xray_without_blackhole_proto
+	bool "Without Blackhole Protocol"
+	default n
+
+config PACKAGE_xray_without_dns_proxy
+	bool "Without DNS Proxy"
+	default n
+
+config PACKAGE_xray_without_dokodemo_proto
+	bool "Without Dokodemo-door Protocol"
+	default n
+
+config PACKAGE_xray_without_freedom_proto
+	bool "Without Freedom Protocol"
+	default n
+
+config PACKAGE_xray_without_mtproto_proxy
+	bool "Without MTProto Proxy"
+	default n
+
+config PACKAGE_xray_without_http_proto
+	bool "Without HTTP Protocol"
+	default n
+
+config PACKAGE_xray_without_shadowsocks_proto
+	bool "Without Shadowsocks Protocol"
+	default n
+
+config PACKAGE_xray_without_socks_proto
+	bool "Without Socks Protocol"
+	default n
+
+config PACKAGE_xray_without_vmess_proto
+	bool "Without VMess Protocol"
+	default n
+
+config PACKAGE_xray_without_tcp_trans
+	bool "Without TCP Transport"
+	default n
+
+config PACKAGE_xray_without_mkcp_trans
+	bool "Without mKCP Transport"
+	default n
+
+config PACKAGE_xray_without_websocket_trans
+	bool "Without WebSocket Transport"
+	default n
+
+config PACKAGE_xray_without_http2_trans
+	bool "Without HTTP/2 Transport"
+	default n
+
+config PACKAGE_xray_without_domain_socket_trans
+	bool "Without Domain Socket Transport"
+	default n
+
+config PACKAGE_xray_without_quic_trans
+	bool "Without QUIC Transport"
+	default n
+
+endmenu
+
+endmenu
