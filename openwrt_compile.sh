@@ -10,18 +10,20 @@ dir="$(cd "$(dirname "$0")" ; pwd)"
 package_name="v2ray-core"
 golang_commit="$OPENWRT_GOLANG_COMMIT"
 
-cache_dir=${CACHE_DIR:-~/cache}
+cache_dir=${CACHE_DIR:-"~/cache"}
 
 sdk_url_path=${SDK_URL_PATH:-"https://downloads.openwrt.org/snapshots/targets/x86/64"}
 sdk_name=${SDK_NAME:-"-sdk-x86-64_"}
 
-sdk_home=${SDK_HOME:-~/sdk}
+sdk_home=${SDK_HOME:-"~/sdk"}
 
-test -d "$sdk_home" || mkdir -p "$sdk_home"
+sdk_home_dir="$(eval echo "$sdk_home")"
 
-sdk_dir="$cache_dir/sdk"
-dl_dir="$cache_dir/dl"
-feeds_dir="$cache_dir/feeds"
+test -d "$sdk_home_dir" || mkdir -p "$sdk_home_dir"
+
+sdk_dir="$(eval echo "$cache_dir/sdk")"
+dl_dir="$(eval echo "$cache_dir/dl")"
+feeds_dir="$(eval echo "$cache_dir/feeds")"
 
 test -d "$sdk_dir" || mkdir -p "$sdk_dir"
 test -d "$dl_dir" || mkdir -p "$dl_dir"
@@ -49,15 +51,15 @@ fi
 cd "$dir"
 
 file "$sdk_dir/$sdk_file"
-tar -Jxf "$sdk_dir/$sdk_file" -C "$sdk_home" --strip=1
+tar -Jxf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
 
-cd "$sdk_home"
+cd "$sdk_home_dir"
 
 ( test -d "dl" && rm -rf "dl" ) || true
 ( test -d "feeds" && rm -rf "feeds" ) || true
 
-ln -sf "$(cd "$dl_dir" ; pwd)" "dl"
-ln -sf "$(cd "$feeds_dir" ; pwd)" "feeds"
+ln -sf "$dl_dir" "dl"
+ln -sf "$feeds_dir" "feeds"
 
 cp feeds.conf.default feeds.conf
 sed -i 's#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#' feeds.conf
