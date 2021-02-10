@@ -143,6 +143,7 @@ jobs:
           sudo apt-get install -yq ccache gettext libncurses5-dev xsltproc
           sudo update-ccache-symlinks
           echo "/usr/lib/ccache" >> $GITHUB_PATH
+          echo "CONFIG_CCACHE=y" >> $GITHUB_ENV
 
       - name: Prepare SDK Home
         run: |
