@@ -1,0 +1,33 @@
+name: Scan V2Ray Version
+
+on:
+  schedule:
+    - cron: "0 1 * * *" # every day at UTC 1:00AM
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Get Latest Version
+        id: get_version
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { tag_name = "" } = await github.repos.getLatestRelease({
+              owner: "v2fly",
+              repo: "v2ray-core"
+            });
+            return tag_name.replace(/^v/, "");
+          result-encoding: string
+
+      - name: Get Lastest Version
+        if: steps.get_version.outputs.result != ""
+        run: |
+          latest_version="${{ steps.get_version.outputs.result }}"
+          echo "$latest_version"
