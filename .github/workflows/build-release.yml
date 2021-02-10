@@ -3,11 +3,7 @@ name: Build and Release
 on:
   push:
     tags:
-      - '*'
-
-env:
-  PACKAGE_NAME: v2ray-core
-  CACHE_DIR: ~/cache
+      - "*"
 
 jobs:
   release:
@@ -120,135 +116,47 @@ jobs:
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
       SDK_NAME: ${{ matrix.sdk_name }}
-      CCACHE_DIR: ~/.ccache
-      CONFIG_CCACHE: y
+      ARCH: ${{ matrix.arch }}
+      CACHE_DIR: ~/cache
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Prepare Cache Key
-        id: cache_key
-        run: echo "::set-output name=timestamp::$(date +"%s")"
-
       - name: Setup Cache
         uses: actions/cache@v2
         with:
-          path: |
-            ${{ env.CACHE_DIR }}
-            ${{ env.CCACHE_DIR }}
-          key: openwrt-${{ matrix.arch }}-${{ env.PACKAGE_NAME }}-${{ steps.cache_key.outputs.timestamp }}
+          path: ${{ env.CACHE_DIR }}
+          key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:release:cache:${{ github.run_number }}
           restore-keys: |
-            openwrt-${{ matrix.arch }}-${{ env.PACKAGE_NAME }}-
+            ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:cache:
+
+      - name: Setup CCache
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:release:ccache:${{ github.run_number }}
+          restore-keys: |
+            ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:ccache:
 
       - name: Install Dependencies
         run: |
-          DEBIAN_FRONTEND=noninteractive \
-          sudo apt-get install -y ccache gettext libncurses5-dev xsltproc
+          sudo apt-get install -yq ccache gettext libncurses5-dev xsltproc
+          sudo update-ccache-symlinks
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
 
-      - name: Create Directories
+      - name: Prepare SDK Home
         run: |
-          CACHE_DIR_SDK="$(eval echo "$CACHE_DIR/sdk")"
-          CACHE_DIR_DL="$(eval echo "$CACHE_DIR/dl")"
-          CACHE_DIR_FEEDS="$(eval echo "$CACHE_DIR/feeds")"
-
-          echo "CACHE_DIR_SDK: $CACHE_DIR_SDK"
-          echo "CACHE_DIR_DL: $CACHE_DIR_DL"
-          echo "CACHE_DIR_FEEDS: $CACHE_DIR_FEEDS"
-
-          test -d "$CACHE_DIR_SDK" || mkdir -p "$CACHE_DIR_SDK"
-          test -d "$CACHE_DIR_DL" || mkdir -p "$CACHE_DIR_DL"
-          test -d "$CACHE_DIR_FEEDS" || mkdir -p "$CACHE_DIR_FEEDS"
-
-          echo "CACHE_DIR_SDK=$CACHE_DIR_SDK" >> $GITHUB_ENV
-          echo "CACHE_DIR_DL=$CACHE_DIR_DL" >> $GITHUB_ENV
-          echo "CACHE_DIR_FEEDS=$CACHE_DIR_FEEDS" >> $GITHUB_ENV
-
           echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
 
-      - name: Download and Unzip SDK
-        run: |
-          cd "$CACHE_DIR_SDK"
-
-          if ! ( wget -q -O - "$SDK_URL_PATH/sha256sums" | \
-            grep -- "$SDK_NAME" > sha256sums.small 2>/dev/null ) ; then
-            echo "::error::Can not find ${SDK_NAME} file in sha256sums."
-            exit 1
-          fi
-
-          SDK_FILE="$(cat sha256sums.small | cut -d' ' -f2 | sed 's/*//g')"
-          if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-            wget -q -O "$SDK_FILE" "$SDK_URL_PATH/$SDK_FILE"
-            if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-              echo "::error::SDK can not be verified!"
-              exit 1
-            fi
-          fi
-
-          cd -
-
-          file "$CACHE_DIR_SDK/$SDK_FILE"
-          tar -Jxf "$CACHE_DIR_SDK/$SDK_FILE" -C "$SDK_HOME" --strip=1
-
-          cd "$SDK_HOME"
-
-          test -d "dl" && rm -rf "dl" || true
-          test -d "feeds" && rm -rf "feeds" || true
-          ln -s "$CACHE_DIR_DL" "dl"
-          ln -s "$CACHE_DIR_FEEDS" "feeds"
-
-          cp feeds.conf.default feeds.conf
-          sed -i 's#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#' feeds.conf
-          sed -i 's#git.openwrt.org/feed/packages#github.com/openwrt/packages#' feeds.conf
-          sed -i 's#git.openwrt.org/project/luci#github.com/openwrt/luci#' feeds.conf
-          sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.conf
-
-          cd -
-
-      - name: Update and Install Packages
+      - name: Build package
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
-        run: |
-          cd "$SDK_HOME"
-
-          ./scripts/feeds update -a
-
-          test -d "feeds/packages/net/$PACKAGE_NAME" && \
-            rm -rf "feeds/packages/net/$PACKAGE_NAME" || true
-          test -d "feeds/packages/lang/golang" && \
-            rm -rf "feeds/packages/lang/golang" || true
-
-          curl https://codeload.github.com/openwrt/packages/tar.gz/${OPENWRT_GOLANG_COMMIT:-master} | \
-            tar -xz -C "feeds/packages/lang" --strip=2 packages-${OPENWRT_GOLANG_COMMIT:-master}/lang/golang
-
-          ln -s "${{ github.workspace }}" "package/$PACKAGE_NAME"
-
-          git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
-
-          ./scripts/feeds install -a
-
-          cd -
-
-      - name: Build Packages
-        run: |
-          cd "$SDK_HOME"
-
-          make defconfig
-          make package/${PACKAGE_NAME}/{clean,compile} V=s
-
-          find "$SDK_HOME/bin/" -type f -name "*.ipk" -exec ls -lh {} \;
-
-          cd -
-
-      - name: Copy Bin Files
-        run: |
-          find "$SDK_HOME/bin/" -type f -name "${PACKAGE_NAME}*.ipk" -exec cp {} "${{ github.workspace }}" \;
-
-          find "${{ github.workspace }}" -type f -name "*.ipk" -exec ls -lh {} \;
+        run: sh openwrt_compile.sh
 
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
-          files: '*.ipk'
+          files: "*.ipk"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
