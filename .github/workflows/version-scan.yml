@@ -26,8 +26,8 @@ jobs:
             return tag_name.replace(/^v/, "");
           result-encoding: string
 
-      - name: Get Lastest Version
-        if: steps.get_version.outputs.result != ""
+      - name: Print Latest Version
+        if: ${{ steps.get_version.outputs.result }} != ''
         run: |
           latest_version="${{ steps.get_version.outputs.result }}"
           echo "$latest_version"
