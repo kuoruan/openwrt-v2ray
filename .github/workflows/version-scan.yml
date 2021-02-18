@@ -18,16 +18,58 @@ jobs:
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { tag_name = "" } = await github.repos.getLatestRelease({
-              owner: "v2fly",
-              repo: "v2ray-core"
-            });
-            return tag_name.replace(/^v/, "");
           result-encoding: string
+          script: |
+            const { data } = await github.repos.getLatestRelease({
+              owner: 'v2fly',
+              repo: 'v2ray-core'
+            });
+            if (data && data.tag_name) {
+              return tag_name.replace(/^v/, "")
+            }
 
-      - name: Print Latest Version
-        if: ${{ steps.get_version.outputs.result }} != ''
+            return "";
+
+      - name: Compare Version
+        id: compare_version
+        if: steps.get_version.outputs.result != ''
         run: |
           latest_version="${{ steps.get_version.outputs.result }}"
-          echo "$latest_version"
+          current_version="$(grep '^PKG_VERSION:' Makefile 2>/dev/null | cut -d'=' -f2)"
+
+          if [ -n "$current_version" ] && \
+            [ "$current_version" != "$latest_version" ] ; then
+
+            source_hash="$(curl -sL \
+              https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$latest_version | \
+              sha256sum | cut -d' ' -f1)"
+
+            echo "::set-output name=version::$latest_version"
+            echo "::set-output name=source_hash::$source_hash"
+          else
+            echo "::set-output name=version::"
+            echo "::set-output name=source_hash::"
+          fi
+
+      - name: Commit New Version
+        if: steps.compare_version.outputs.version != '' && steps.compare_version.outputs.source_hash != ''
+        run: |
+          version="${{ steps.compare_version.outputs.version }}"
+          source_hash="${{ steps.compare_version.outputs.source_hash }}
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          sed -i \
+            -e 's/^PKG_VERSION.*/PKG_VERSION:=${version}/' \
+            -e 's/^PKG_RELEASE.*/PKG_RELEASE:=1/' \
+            -e 's/^PKG_HASH.*/PKG_HASH:=${source_hash}/' \
+            Makefile
+
+          git add -f Makefile
+
+          git commit -am "chore: bump to v${version}-1"
+          git push origin master
+
+          git tag -am "v${version}-1"
+          git push --tags
