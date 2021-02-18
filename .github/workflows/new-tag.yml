@@ -1,12 +1,11 @@
-name: Build Test
+name: New Tag
 
 on:
   push:
-    branches-ignore:
+    branches:
       - "releases/v*"
     tags-ignore:
       - "*"
-  pull_request:
 
 jobs:
   build:
@@ -62,3 +61,39 @@ jobs:
           path: |
             *.ipk
           retention-days: 7
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Get Version
+        id: get_version
+        run: |
+          pkg_version="$(grep '^PKG_VERSION:' Makefile 2>/dev/null | cut -d'=' -f2)
+          pkg_release="$(grep '^PKG_RELEASE:' Makefile 2>/dev/null | cut -d'=' -f2)
+
+          if [ "${GITHUB_REF#refs/heads/}" == "releases/v${pkg_version}-${pkg_release}" ] ; then
+            echo "::set-output name=version::$pkg_version"
+            echo "::set-output name=release::$pkg_release"
+          else
+            echo "::set-output name=version::0"
+            echo "::set-output name=release::0"
+          fi
+
+      - name: Commit New Tag
+        if: steps.get_version.outputs.version != '0' && steps.get_version.outputs.release != '0'
+        run: |
+          version="${{ steps.get_version.outputs.version }}"
+          release="${{ steps.get_version.outputs.release }}"
+          release_branch="releases/v${version}-${release}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout "$release_branch"
+          git pull --rebase origin master
+          git checkout master
+
+          git rebase "$release_branch"
+          git tag -am "v${version}-${release}"
+          git push origin master --follow-tags
