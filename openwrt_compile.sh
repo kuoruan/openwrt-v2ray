@@ -1,9 +1,7 @@
-#!/bin/sh
+#!/bin/sh -e
 #
 # Copyright (C) 2021 Xingwang Liao
 #
-
-set -e
 
 dir="$(cd "$(dirname "$0")" ; pwd)"
 
@@ -40,7 +38,7 @@ fi
 sdk_file="$(cut -d' ' -f2 < sha256sums.small | sed 's/*//g')"
 
 if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-	wget -O "$sdk_file" "$sdk_url_path/$sdk_file"
+	wget -q -O "$sdk_file" "$sdk_url_path/$sdk_file"
 
 	if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
 		echo "SDK can not be verified!"
@@ -72,7 +70,7 @@ sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.co
 ( test -d "feeds/packages/net/$package_name" && \
 	rm -rf "feeds/packages/net/$package_name" ) || true
 
-# replace golang with version defind in env
+# replace golang with version defined in env
 if [ -n "$golang_commit" ] ; then
 	( test -d "feeds/packages/lang/golang" && \
 		rm -rf "feeds/packages/lang/golang" ) || true
@@ -84,7 +82,7 @@ fi
 ln -sf "$dir" "package/$package_name"
 
 if [ ! -d "package/openwrt-upx" ] ; then
-    git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+	git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
 fi
 
 ./scripts/feeds install -a
