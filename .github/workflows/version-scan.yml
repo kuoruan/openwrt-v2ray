@@ -55,25 +55,24 @@ jobs:
         if: steps.compare_version.outputs.version != '' && steps.compare_version.outputs.source_hash != ''
         run: |
           version="${{ steps.compare_version.outputs.version }}"
-          source_hash="${{ steps.compare_version.outputs.source_hash }}
+          source_hash="${{ steps.compare_version.outputs.source_hash }}"
 
           release_branch="releases/v${version}-1"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git rev-parse --quiet --verify "$release_branch" >/dev/null ; then
+          if [ "$(git ls-remote origin "$release_branch" | wc -l)" -gt "0" ] ; then
             # delete existing release branch
             git push origin :$release_branch 2>/dev/null || true
-            git branch -D "$release_branch"
           fi
 
           git checkout -b "$release_branch"
 
           sed -i \
-            -e 's/^PKG_VERSION.*/PKG_VERSION:=${version}/' \
-            -e 's/^PKG_RELEASE.*/PKG_RELEASE:=1/' \
-            -e 's/^PKG_HASH.*/PKG_HASH:=${source_hash}/' \
+            -e "s/^PKG_VERSION.*/PKG_VERSION:=${version}/" \
+            -e "s/^PKG_RELEASE.*/PKG_RELEASE:=1/" \
+            -e "s/^PKG_HASH.*/PKG_HASH:=${source_hash}/" \
             Makefile
 
           git add -f Makefile
