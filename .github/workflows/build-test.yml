@@ -42,6 +42,7 @@ jobs:
           sudo update-ccache-symlinks
           echo "/usr/lib/ccache" >> $GITHUB_PATH
           echo "CONFIG_CCACHE=y" >> $GITHUB_ENV
+          echo "CONFIG_CCACHE_DIR=~/.ccache" >> $GITHUB_ENV
 
       - name: Prepare SDK Home
         run: |

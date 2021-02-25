@@ -78,5 +78,5 @@ jobs:
 
           git add -f Makefile
 
-          git commit -am "chore: bump to v${version}-1"
+          git commit -m "chore: bump to v${version}-1"
           git push -u origin "$release_branch"

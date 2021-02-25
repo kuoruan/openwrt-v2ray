@@ -59,11 +59,14 @@ cd "$sdk_home_dir"
 ln -sf "$dl_dir" "dl"
 ln -sf "$feeds_dir" "feeds"
 
-cp feeds.conf.default feeds.conf
-sed -i 's#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#' feeds.conf
-sed -i 's#git.openwrt.org/feed/packages#github.com/openwrt/packages#' feeds.conf
-sed -i 's#git.openwrt.org/project/luci#github.com/openwrt/luci#' feeds.conf
-sed -i 's#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#' feeds.conf
+cp -f feeds.conf.default feeds.conf
+
+sed -i '
+s#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#
+s#git.openwrt.org/feed/packages#github.com/openwrt/packages#
+s#git.openwrt.org/project/luci#github.com/openwrt/luci#
+s#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#
+' feeds.conf
 
 ./scripts/feeds update -a
 
@@ -82,7 +85,8 @@ fi
 ln -sf "$dir" "package/$package_name"
 
 if [ ! -d "package/openwrt-upx" ] ; then
-	git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+	git clone -b master --depth 1 \
+		https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
 fi
 
 ./scripts/feeds install -a
@@ -94,6 +98,6 @@ make package/${package_name}/compile V=s
 
 cd "$dir"
 
-find "$sdk_home/bin/" -type f -exec ls -lh {} \;
+find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
 
-find "$sdk_home/bin/" -type f -name "${package_name}*.ipk" -exec cp -f {} "$dir" \;
+find "$sdk_home_dir/bin/" -type f -name "${package_name}*.ipk" -exec cp -f {} "$dir" \;

@@ -41,6 +41,7 @@ jobs:
           sudo update-ccache-symlinks
           echo "/usr/lib/ccache" >> $GITHUB_PATH
           echo "CONFIG_CCACHE=y" >> $GITHUB_ENV
+          echo "CONFIG_CCACHE_DIR=~/.ccache" >> $GITHUB_ENV
 
       - name: Prepare SDK Home
         run: |
@@ -66,13 +67,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Get Version
         id: get_version
         run: |
-          pkg_version="$(grep '^PKG_VERSION:' Makefile 2>/dev/null | cut -d'=' -f2)
-          pkg_release="$(grep '^PKG_RELEASE:' Makefile 2>/dev/null | cut -d'=' -f2)
+          pkg_version="$(grep '^PKG_VERSION:' Makefile 2>/dev/null | cut -d'=' -f2)"
+          pkg_release="$(grep '^PKG_RELEASE:' Makefile 2>/dev/null | cut -d'=' -f2)"
 
-          if [ "${GITHUB_REF#refs/heads/}" == "releases/v${pkg_version}-${pkg_release}" ] ; then
+          if [ "${GITHUB_REF#refs/heads/}" = "releases/v${pkg_version}-${pkg_release}" ] ; then
             echo "::set-output name=version::$pkg_version"
             echo "::set-output name=release::$pkg_release"
           else
@@ -91,9 +95,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout "$release_branch"
-          git pull --rebase origin master
+
+          git fetch origin master
+          git rebase origin/master
           git checkout master
 
           git rebase "$release_branch"
-          git tag -am "v${version}-${release}"
+          git tag -a "v${version}-${release}" -m "v${version}-${release}"
           git push origin master --follow-tags
+
+          git push origin --delete "$release_branch"
