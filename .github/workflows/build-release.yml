@@ -156,7 +156,7 @@ jobs:
       - name: Build package
         env:
           OPENWRT_GOLANG_COMMIT: ${{ secrets.OPENWRT_GOLANG_COMMIT }}
-        run: sh openwrt_compile.sh
+        run: sh compile.sh
 
       - name: Show CCache Status
         run: |
