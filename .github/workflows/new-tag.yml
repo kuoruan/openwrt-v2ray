@@ -37,15 +37,18 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo apt-get install -yq ccache gettext libncurses5-dev xsltproc
-          sudo update-ccache-symlinks
-          echo "/usr/lib/ccache" >> $GITHUB_PATH
-          echo "CONFIG_CCACHE=y" >> $GITHUB_ENV
-          echo "CONFIG_CCACHE_DIR=~/.ccache" >> $GITHUB_ENV
+          sudo apt-get update && \
+            sudo apt-get install -yq gettext libncurses5-dev xsltproc
 
-      - name: Prepare SDK Home
+      - name: Prepare For Build
         run: |
-          echo "SDK_HOME=$(mktemp -d)" >> $GITHUB_ENV
+          sdk_home="$(mktemp -d)"
+
+          test -d ~/.ccache || mkdir -p ~/.ccache
+          ln -sf ~/.ccache "$sdk_home/.ccache"
+
+          echo "SDK_HOME=$sdk_home" >> $GITHUB_ENV
+          echo "CONFIG_CCACHE=y" >> $GITHUB_ENV
 
       - name: Build package
         env:
@@ -53,7 +56,8 @@ jobs:
         run: sh openwrt_compile.sh
 
       - name: Show CCache Status
-        run: ccache -s
+        run: |
+          eval "$sdk_home/staging_dir/host/bin/ccache -s"
 
       - name: Save Build Result
         uses: actions/upload-artifact@v2
