@@ -69,6 +69,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 10
 
       - name: Get Version
         id: get_version
@@ -89,19 +91,23 @@ jobs:
         run: |
           version="${{ steps.get_version.outputs.version }}"
           release="${{ steps.get_version.outputs.release }}"
-          release_branch="releases/v${version}-${release}"
+
+          tag_name="v${version}-${release}"
+          release_branch="releases/$tag_name"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout "$release_branch"
 
-          git fetch origin master
-          git rebase origin/master
+          git fetch origin master:master
+          git rebase master
           git checkout master
 
           git rebase "$release_branch"
-          git tag -a "v${version}-${release}" -m "v${version}-${release}"
-          git push origin master --follow-tags
+          git push origin HEAD:master
+
+          git tag -a "$tag_name" -m "$tag_name"
+          git push origin "$tag_name"
 
           git push origin --delete "$release_branch"
