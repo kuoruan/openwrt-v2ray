@@ -160,7 +160,7 @@ jobs:
 
       - name: Show CCache Status
         run: |
-          eval "$sdk_home/staging_dir/host/bin/ccache -s"
+          eval "${{ env.SDK_HOME }}/staging_dir/host/bin/ccache -s"
 
       - name: Release and Upload Assets
         uses: softprops/action-gh-release@v1
