@@ -9,6 +9,7 @@ jobs:
   check:
     name: Check Version
     runs-on: ubuntu-latest
+    if: ${{ github.repository_owner }} == "kuoruan"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
