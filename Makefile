@@ -48,6 +48,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http_proto \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_shadowsocks_proto \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_socks_proto \
+	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_trojan_proto \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_vmess_proto \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tcp_trans \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans \
@@ -206,6 +207,11 @@ endif
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_socks_proto),y)
 V2RAY_SED_ARGS += \
 	s,_ "github.com/v2fly/v2ray-core/v4/proxy/socks",// &,;
+endif
+
+ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_trojan_proto),y)
+V2RAY_SED_ARGS += \
+	s,_ "github.com/v2fly/v2ray-core/v4/proxy/trojan",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_vmess_proto),y)
