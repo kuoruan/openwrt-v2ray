@@ -32,6 +32,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_compress_upx \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns \
+	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_fakedns \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tls \
 	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_udp \
@@ -110,20 +111,24 @@ endef
 
 V2RAY_SED_ARGS:=
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_internal),y)
+ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_v2ctl),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/main/json",// &,; \
-	s,// \(_ "github.com/v2fly/v2ray-core/v4/main/jsonem"\),\1,;
+	s,// \(_ "github.com/v2fly/v2ray-core/v4/main/json"\),\1,; \
+	s,_ "github.com/v2fly/v2ray-core/v4/main/jsonem",// &,;
 else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_none),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/main/json",// &,;
+	s,_ "github.com/v2fly/v2ray-core/v4/main/jsonem",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features),y)
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/dns",// &,;
+	s,_ "github.com/v2fly/v2ray-core/v4/app/dns",// &,; \
+	s,_ "github.com/v2fly/v2ray-core/v4/app/dns/fakedns",// &,;
+else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_fakedns),y)
+V2RAY_SED_ARGS += \
+	s,_ "github.com/v2fly/v2ray-core/v4/app/dns/fakedns",// &,;
 endif
 
 ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log),y)

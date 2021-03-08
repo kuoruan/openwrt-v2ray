@@ -40,6 +40,10 @@ config PACKAGE_v2ray_mini_without_dns
 	bool "Without Internal DNS Support"
 	default n
 
+config PACKAGE_v2ray_mini_without_fakedns
+    bool "Without Fake DNS Support"
+    depends on !PACKAGE_v2ray_mini_without_dns
+
 config PACKAGE_v2ray_mini_without_log
 	bool "Without Log Support"
 	default n
