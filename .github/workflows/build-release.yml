@@ -59,7 +59,7 @@ jobs:
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/oxnas/ox820
             sdk_name: -sdk-oxnas-ox820_
           - arch: arm_mpcore_vfp
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/cns3xxx/generic
+            sdk_url_path: https://downloads.openwrt.org/releases/19.07.7/targets/cns3xxx/generic
             sdk_name: -sdk-cns3xxx_
           - arch: arm_xscale
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/kirkwood/generic
