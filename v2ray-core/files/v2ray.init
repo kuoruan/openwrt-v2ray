@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+
+START=99
+
+CONF=/etc/v2ray/config.json
+EXEC=/usr/bin/v2ray
+
+start_service() {
+  procd_open_instance
+  procd_set_param command $EXEC -c $CONF
+  procd_set_param file $CONF
+  procd_set_param pidfile /var/run/v2ray.pid
+  procd_set_param respawn
+  procd_close_instance
+}
+
+start() {
+        service_start $EXEC
+}
+
+stop() {
+        service_stop $EXEC
+}
+
+reload() {
+        service_reload $EXEC
+}
