@@ -67,10 +67,10 @@ Bin files will install in `/usr/bin`.
 
 1. Use the latest [OpenWrt SDK](https://downloads.openwrt.org/snapshots/) or with source code in master branch (requires golang modules support, commit [openwrt/packages@7dc1f3e](https://github.com/openwrt/packages/commit/7dc1f3e0293588ebc544e8eee104043dd0dacaf5) and later).
 
-2. Enter root directory of SDK, then download the Makefile:
+2. Enter root directory of SDK, then add the v2ray feed to the bottom of `feeds.conf.default`:
 
-```sh
-git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray-core
+```
+src-git v2ray https://github.com/kuoruan/openwrt-v2ray.git
 ```
 
 > For Chinese users, `export GOPROXY=https://goproxy.io` before build.
@@ -94,10 +94,10 @@ make package/v2ray-core/{clean,compile} V=s
 
 3. UPX Compress
 
-If you want to build with UPX compress, the UPX package is required.
+If you want to build with UPX compress, the UPX package is required. Add the upx feed to the bottom of `feeds.conf.default`:
 
-```sh
-git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
+```
+src-git upx https://github.com/kuoruan/openwrt-upx.git
 ```
 
 ## Uninstall
