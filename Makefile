@@ -331,7 +331,7 @@ define Package/v2ray-core/install
 
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/release/config/{geoip,geosite}.dat \
-		$(1)/usr/bin
+		$(1)/usr/share/v2ray
 endef
 
 define Package/v2ray-core-mini/install
@@ -348,7 +348,7 @@ endif
 ifneq ($(CONFIG_PACKAGE_v2ray_mini_exclude_assets),y)
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/release/config/{geoip,geosite}.dat \
-		$(1)/usr/bin
+		$(1)/usr/share/v2ray
 endif
 endef
 
