@@ -39,7 +39,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update && \
-            sudo apt-get install -yq gettext libncurses5-dev xsltproc
+            sudo apt-get install -yq gettext libncurses5-dev rsync xsltproc
 
       - name: Prepare For Build
         run: |
