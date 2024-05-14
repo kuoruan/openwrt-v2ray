@@ -9,31 +9,64 @@ config PACKAGE_v2ray_mini_compress_upx
 	bool "Compress executable files with UPX"
 	default y
 
-config PACKAGE_v2ray_mini_custom_features
-	bool "Custom Features"
+config PACKAGE_v2ray_mini_enable_features
+	bool "Enable Features"
 	default n
 
-menu "Features Configuration"
-	depends on PACKAGE_v2ray_mini_custom_features
+menu "Enable Features Configuration"
+	depends on PACKAGE_v2ray_mini_enable_features
+
+# Subscription Supports
+config PACKAGE_v2ray_min_with_subscription_support
+	bool "With Subscription Supports"
+	default n
+
+# Developer preview services
+config PACKAGE_v2ray_min_with_instman
+	bool "With Instance Management"
+	default n
+
+config PACKAGE_v2ray_min_with_observatory
+	bool "With Observatory"
+	default n
+
+# Developer preview features
+config PACKAGE_v2ray_main_with_restfulapi
+	bool "With RESTful API"
+	default n
+
+config PACKAGE_v2ray_mini_with_tun
+	bool "With TUN Support"
+	default n
+
+# Developer preview proxies
+config PACKAGE_v2ray_mini_with_vlite_proto
+	bool "With VLite Protocol"
+	default n
+
+config PACKAGE_v2ray_mini_with_shadowsocks2022_proto
+	bool "With Shadowsocks2022 Protocol"
+	default n
+
+endmenu
+
+config PACKAGE_v2ray_mini_disable_features
+	bool "Disable Features"
+	default n
+
+menu "Disable Features Configuration"
+	depends on PACKAGE_v2ray_mini_disable_features
 
 config PACKAGE_v2ray_mini_without_dns
 	bool "Without Internal DNS Support"
 	default n
 
 config PACKAGE_v2ray_mini_without_fakedns
-    bool "Without Fake DNS Support"
-    depends on !PACKAGE_v2ray_mini_without_dns
+	bool "Without Fake DNS Support"
+	depends on !PACKAGE_v2ray_mini_without_dns
 
 config PACKAGE_v2ray_mini_without_log
 	bool "Without Log Support"
-	default n
-
-config PACKAGE_v2ray_mini_without_tls
-	bool "Without TLS Support"
-	default n
-
-config PACKAGE_v2ray_mini_without_udp
-	bool "Without UDP Support"
 	default n
 
 config PACKAGE_v2ray_mini_without_policy
@@ -52,6 +85,7 @@ config PACKAGE_v2ray_mini_without_statistics
 	bool "Without Statistics Support"
 	default n
 
+# Inbound and outbound proxies
 config PACKAGE_v2ray_mini_without_blackhole_proto
 	bool "Without Blackhole Protocol"
 	default n
@@ -66,10 +100,6 @@ config PACKAGE_v2ray_mini_without_dokodemo_proto
 
 config PACKAGE_v2ray_mini_without_freedom_proto
 	bool "Without Freedom Protocol"
-	default n
-
-config PACKAGE_v2ray_mini_without_mtproto_proxy
-	bool "Without MTProto Proxy"
 	default n
 
 config PACKAGE_v2ray_mini_without_http_proto
@@ -88,32 +118,49 @@ config PACKAGE_v2ray_mini_without_trojan_proto
 	bool "Without Trojan Protocol"
 	default n
 
+config PACKAGE_v2ray_min_without_vless_proto
+	bool "Without VLESS Protocol"
+	default n
+
 config PACKAGE_v2ray_mini_without_vmess_proto
 	bool "Without VMess Protocol"
 	default n
 
+# Transports
 config PACKAGE_v2ray_mini_without_tcp_trans
 	bool "Without TCP Transport"
 	default n
 
-config PACKAGE_v2ray_mini_without_mkcp_trans
-	bool "Without mKCP Transport"
-	default n
-
-config PACKAGE_v2ray_mini_without_websocket_trans
-	bool "Without WebSocket Transport"
-	default n
-
-config PACKAGE_v2ray_mini_without_http2_trans
-	bool "Without HTTP/2 Transport"
+config PACKAGE_v2ray_mini_without_udp_trans
+	bool "Without UDP Transport"
 	default n
 
 config PACKAGE_v2ray_mini_without_domain_socket_trans
 	bool "Without Domain Socket Transport"
 	default n
 
+config PACKAGE_v2ray_mini_without_grpc_trans
+	bool "Without gRPC Transport"
+	default n
+
+config PACKAGE_v2ray_mini_without_http2_trans
+	bool "Without HTTP/2 Transport"
+	default n
+
+config PACKAGE_v2ray_mini_without_mkcp_trans
+	bool "Without mKCP Transport"
+	default n
+
 config PACKAGE_v2ray_mini_without_quic_trans
 	bool "Without QUIC Transport"
+	default n
+
+config PACKAGE_v2ray_mini_without_websocket_trans
+	bool "Without WebSocket Transport"
+	default n
+
+config PACKAGE_v2ray_mini_without_v5cfg
+	bool "Without V5 Configuration"
 	default n
 
 endmenu
