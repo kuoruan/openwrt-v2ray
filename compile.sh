@@ -1,6 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 #
-# Copyright (C) 2021 Xingwang Liao
+# Copyright (C) 2021-2024 Xingwang Liao
 #
 
 dir="$(cd "$(dirname "$0")" ; pwd)"
@@ -29,7 +29,7 @@ test -d "$feeds_dir" || mkdir -p "$feeds_dir"
 
 cd "$sdk_dir"
 
-if ! ( wget -q -O - "$sdk_url_path/sha256sums" | \
+if ! ( curl -L -s -v "$sdk_url_path/sha256sums" | \
 	grep -- "$sdk_name" > sha256sums.small 2>/dev/null ) ; then
 	echo "Can not find ${sdk_name} file in sha256sums."
 	exit 1
@@ -38,7 +38,7 @@ fi
 sdk_file="$(cut -d' ' -f2 < sha256sums.small | sed 's/*//g')"
 
 if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-	wget -q -O "$sdk_file" "$sdk_url_path/$sdk_file"
+	curl -L -o "$sdk_file" "$sdk_url_path/$sdk_file"
 
 	if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
 		echo "SDK can not be verified!"
@@ -49,7 +49,30 @@ fi
 cd "$dir"
 
 file "$sdk_dir/$sdk_file"
-tar -Jxf "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
+
+case "$sdk_file" in
+	*.tar.xz)
+		untar="tar -Jxf"
+		;;
+	*.tar.gz)
+		untar="tar -zxf"
+		;;
+	*.tar.bz2)
+		untar="tar -jxf"
+		;;
+	*.tar)
+		untar="tar -xf"
+		;;
+	*.tar.zst)
+		untar="tar -I zstd -xf"
+		;;
+	*)
+		echo "Unknown file format: $sdk_file"
+		exit 1
+		;;
+esac
+
+$untar "$sdk_dir/$sdk_file" -C "$sdk_home_dir" --strip=1
 
 cd "$sdk_home_dir"
 
@@ -82,7 +105,11 @@ if [ -n "$golang_commit" ] ; then
 		tar -xz -C "feeds/packages/lang" --strip=2 "packages-$golang_commit/lang/golang"
 fi
 
-ln -sf "$dir" "package/$package_name"
+if [ -h "package/${package_name}" ] ; then
+	rm -f "package/${package_name}"
+fi
+
+ln -s "$dir" "package/${package_name}"
 
 if [ ! -d "package/openwrt-upx" ] ; then
 	git clone -b master --depth 1 \
@@ -94,7 +121,12 @@ fi
 make defconfig
 
 make package/${package_name}/clean
-make package/${package_name}/compile V=s
+
+cores=$(nproc)
+
+if ! ( make package/${package_name}/compile -j$(expr $cores + 1) ) ; then
+	make package/${package_name}/compile -j1 V=s
+fi
 
 cd "$dir"
 
