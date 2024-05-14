@@ -62,7 +62,7 @@ GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	github.com/v2fly/v2ray-core/v5.version=$(PKG_VERSION) \
 	github.com/v2fly/v2ray-core/v5.build=R$(PKG_RELEASE) \
-	github.com/v2fly/v2ray-core/v5.codename=OpenWrt
+	github.com/v2fly/v2ray-core/v5.codename="OpenWrt V2Fly"
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk

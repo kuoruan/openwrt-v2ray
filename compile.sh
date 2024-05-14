@@ -29,7 +29,7 @@ test -d "$feeds_dir" || mkdir -p "$feeds_dir"
 
 cd "$sdk_dir"
 
-if ! ( curl -L -s -v "$sdk_url_path/sha256sums" | \
+if ! ( curl -L -s "$sdk_url_path/sha256sums" | \
 	grep -- "$sdk_name" > sha256sums.small 2>/dev/null ) ; then
 	echo "Can not find ${sdk_name} file in sha256sums."
 	exit 1
