@@ -38,7 +38,7 @@ fi
 sdk_file="$(cut -d' ' -f2 < sha256sums.small | sed 's/*//g')"
 
 if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
-	curl -L -o "$sdk_file" "$sdk_url_path/$sdk_file"
+	curl -L -s -o "$sdk_file" "$sdk_url_path/$sdk_file"
 
 	if ! sha256sum -c ./sha256sums.small >/dev/null 2>&1 ; then
 		echo "SDK can not be verified!"
@@ -88,6 +88,7 @@ sed -i '
 s#git.openwrt.org/openwrt/openwrt#github.com/openwrt/openwrt#
 s#git.openwrt.org/feed/packages#github.com/openwrt/packages#
 s#git.openwrt.org/project/luci#github.com/openwrt/luci#
+s#git.openwrt.org/feed/routing#github.com/openwrt/routing#
 s#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#
 ' feeds.conf
 
