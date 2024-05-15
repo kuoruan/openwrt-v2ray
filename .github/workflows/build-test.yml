@@ -18,10 +18,10 @@ jobs:
       CACHE_DIR: ~/cache
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.CACHE_DIR }}
           key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:cache:${{ github.run_number }}
@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:cache:
 
       - name: Setup CCache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:ccache:${{ github.run_number }}
@@ -61,7 +61,7 @@ jobs:
           eval "${{ env.SDK_HOME }}/staging_dir/host/bin/ccache -s"
 
       - name: Save Build Result
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: v2ray-core
           path: |

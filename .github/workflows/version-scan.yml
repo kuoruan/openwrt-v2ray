@@ -12,13 +12,13 @@ jobs:
     if: ${{ github.repository_owner }} == "kuoruan"
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
 
       - name: Get Latest Version
         id: get_version
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
@@ -47,11 +47,11 @@ jobs:
               "https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$latest_version" | \
               sha256sum | cut -d' ' -f1)"
 
-            echo "::set-output name=version::$latest_version"
-            echo "::set-output name=source_hash::$source_hash"
+            echo "version=$latest_version" >> $GITHUB_OUTPUT
+            echo "source_hash=$source_hash" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=version::"
-            echo "::set-output name=source_hash::"
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "source_hash=" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit New Version
@@ -62,8 +62,8 @@ jobs:
 
           release_branch="releases/v${version}-1"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
           if [ "$(git ls-remote origin "$release_branch" | wc -l)" -gt "0" ] ; then
             # delete existing release branch

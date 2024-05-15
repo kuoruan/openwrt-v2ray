@@ -17,10 +17,10 @@ jobs:
       CACHE_DIR: ~/cache
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.CACHE_DIR }}
           key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:cache:${{ github.run_number }}
@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:cache:
 
       - name: Setup CCache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:ccache:${{ github.run_number }}
@@ -60,7 +60,7 @@ jobs:
           eval "${{ env.SDK_HOME }}/staging_dir/host/bin/ccache -s"
 
       - name: Save Build Result
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: v2ray-core
           path: |
@@ -72,7 +72,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 10
           token: ${{ secrets.PAT }}
@@ -84,15 +84,15 @@ jobs:
           pkg_release="$(grep '^PKG_RELEASE:' Makefile 2>/dev/null | cut -d'=' -f2)"
 
           if [ "${GITHUB_REF#refs/heads/}" = "releases/v${pkg_version}-${pkg_release}" ] ; then
-            echo "::set-output name=version::$pkg_version"
-            echo "::set-output name=release::$pkg_release"
+            echo "version=$pkg_version" >> $GITHUB_OUTPUT
+            echo "release=$pkg_release" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=version::0"
-            echo "::set-output name=release::0"
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "release=" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit New Tag
-        if: steps.get_version.outputs.version != '0' && steps.get_version.outputs.release != '0'
+        if: steps.get_version.outputs.version != '' && steps.get_version.outputs.release != ''
         run: |
           version="${{ steps.get_version.outputs.version }}"
           release="${{ steps.get_version.outputs.release }}"
@@ -100,8 +100,8 @@ jobs:
           tag_name="v${version}-${release}"
           release_branch="releases/$tag_name"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
           git checkout "$release_branch"
 

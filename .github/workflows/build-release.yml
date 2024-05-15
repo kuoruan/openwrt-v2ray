@@ -25,9 +25,6 @@ jobs:
           - arch: arm_arm1176jzf-s_vfp
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2708
             sdk_name: -sdk-bcm27xx-bcm2708_
-          - arch: arm_arm926ej-s
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/at91/legacy
-            sdk_name: -sdk-at91-legacy_
           - arch: arm_cortex-a15_neon-vfpv4
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ipq806x/generic
             sdk_name: -sdk-ipq806x-generic_
@@ -44,11 +41,8 @@ jobs:
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm53xx/generic
             sdk_name: -sdk-bcm53xx-generic_
           - arch: arm_cortex-a9_neon
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/imx6/generic
-            sdk_name: -sdk-imx6_
-          - arch: arm_cortex-a9_vfpv3
-            sdk_url_path: https://downloads.openwrt.org/releases/19.07.2/targets/mvebu/cortexa9
-            sdk_name: -sdk-19.07.2-mvebu-cortexa9_
+            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/imx/cortexa9
+            sdk_name: -sdk-imx-cortexa9_
           - arch: arm_cortex-a9_vfpv3-d16
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mvebu/cortexa9
             sdk_name: -sdk-mvebu-cortexa9_
@@ -58,9 +52,6 @@ jobs:
           - arch: arm_mpcore
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/oxnas/ox820
             sdk_name: -sdk-oxnas-ox820_
-          - arch: arm_mpcore_vfp
-            sdk_url_path: https://downloads.openwrt.org/releases/19.07.7/targets/cns3xxx/generic
-            sdk_name: -sdk-19.07.7-cns3xxx_
           - arch: arm_xscale
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/kirkwood/generic
             sdk_name: -sdk-kirkwood_
@@ -70,9 +61,6 @@ jobs:
           - arch: i386_pentium4
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/generic
             sdk_name: -sdk-x86-generic_
-          - arch: mips64_octeon
-            sdk_url_path: http://downloads.openwrt.org/releases/18.06.5/targets/octeon/generic
-            sdk_name: -sdk-18.06.5-octeon_
           - arch: mips64_octeonplus
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/octeon/generic
             sdk_name: -sdk-octeon_
@@ -97,21 +85,6 @@ jobs:
           - arch: x86_64
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/64
             sdk_name: -sdk-x86-64_
-          # - arch: arc_arc700
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/arc770/generic
-          #   sdk_name: -sdk-arc770-generic_
-          # - arch: arc_archs
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/archs38/generic
-          #   sdk_name: -sdk-archs38-generic_
-          # - arch: armeb_xscale
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ixp4xx/generic
-          #   sdk_name: -sdk-ixp4xx-generic_
-          # - arch: powerpc_464fp
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/apm821xx/nand
-          #   sdk_name: -sdk-apm821xx-nand_
-          # - arch: powerpc_8540
-          #   sdk_url_path: https://downloads.openwrt.org/snapshots/targets/mpc85xx/generic
-          #   sdk_name: -sdk-mpc85xx-generic_
 
     env:
       SDK_URL_PATH: ${{ matrix.sdk_url_path }}
@@ -120,10 +93,10 @@ jobs:
       CACHE_DIR: ~/cache
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.CACHE_DIR }}
           key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:release:cache:${{ github.run_number }}
@@ -131,7 +104,7 @@ jobs:
             ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:cache:
 
       - name: Setup CCache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: ${{ runner.os }}:openwrt-v2ray:${{ env.ARCH }}:release:ccache:${{ github.run_number }}
@@ -163,7 +136,7 @@ jobs:
           eval "${{ env.SDK_HOME }}/staging_dir/host/bin/ccache -s"
 
       - name: Release and Upload Assets
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: "*.ipk"
         env:
