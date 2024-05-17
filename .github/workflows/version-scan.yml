@@ -23,7 +23,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
           script: |
-            const { data } = await github.repos.getLatestRelease({
+            const { data } = await github.rest.repos.getLatestRelease({
               owner: 'v2fly',
               repo: 'v2ray-core'
             });
