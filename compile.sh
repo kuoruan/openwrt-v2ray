@@ -134,3 +134,10 @@ cd "$dir"
 find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
 
 find "$sdk_home_dir/bin/" -type f -name "${package_name}*.ipk" -exec cp -f {} "$dir" \;
+
+if [ -z "$(find "$dir" -maxdepth 1 -name "${package_name}*.ipk" -print -quit)" ]; then
+	echo "::error::Build failed! No IPK file found."
+	echo "Listing bin directory:"
+	find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
+	exit 1
+fi
