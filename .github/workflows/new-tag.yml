@@ -11,8 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SDK_URL_PATH: https://downloads.openwrt.org/snapshots/targets/x86/64
-      SDK_NAME: -sdk-x86-64_
+      SDK_URL_PATH: https://downloads.openwrt.org/releases/23.05.5/targets/x86/64
+      SDK_NAME: -sdk-23.05.5-x86-64_
       ARCH: x86_64
       CACHE_DIR: ~/cache
     steps:
