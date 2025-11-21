@@ -98,7 +98,11 @@ s#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#
 	rm -rf "feeds/packages/net/$package_name" ) || true
 
 # replace golang with version defined in env
-if [ -n "$golang_commit" ] ; then
+if [ -z "$golang_commit" ]; then
+	golang_commit="master"
+fi
+
+if [ -n "$golang_commit" ]; then
 	( test -d "feeds/packages/lang/golang" && \
 		rm -rf "feeds/packages/lang/golang" ) || true
 
