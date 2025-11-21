@@ -65,6 +65,7 @@ jobs:
           name: v2ray-core
           path: |
             *.ipk
+            *.apk
           retention-days: 7
 
   tag:

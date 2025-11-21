@@ -134,9 +134,10 @@ cd "$dir"
 find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
 
 find "$sdk_home_dir/bin/" -type f -name "${package_name}*.ipk" -exec cp -f {} "$dir" \;
+find "$sdk_home_dir/bin/" -type f -name "${package_name}*.apk" -exec cp -f {} "$dir" \;
 
-if [ -z "$(find "$dir" -maxdepth 1 -name "${package_name}*.ipk" -print -quit)" ]; then
-	echo "::error::Build failed! No IPK file found."
+if [ -z "$(find "$dir" -maxdepth 1 \( -name "${package_name}*.ipk" -o -name "${package_name}*.apk" \) -print -quit)" ]; then
+	echo "::error::Build failed! No IPK/APK file found."
 	echo "Listing bin directory:"
 	find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
 	exit 1
