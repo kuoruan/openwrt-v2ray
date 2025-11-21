@@ -48,13 +48,11 @@ jobs:
             sdk_name: -sdk-mvebu-cortexa9_
           - arch: arm_fa526
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/gemini/generic
-            sdk_name: -sdk-gemini_
-          - arch: arm_mpcore
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/oxnas/ox820
-            sdk_name: -sdk-oxnas-ox820_
+            sdk_name: -sdk-gemini-generic_
+
           - arch: arm_xscale
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/kirkwood/generic
-            sdk_name: -sdk-kirkwood_
+            sdk_name: -sdk-kirkwood-generic_
           - arch: i386_pentium
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/legacy
             sdk_name: -sdk-x86-legacy_
@@ -63,13 +61,13 @@ jobs:
             sdk_name: -sdk-x86-generic_
           - arch: mips64_octeonplus
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/octeon/generic
-            sdk_name: -sdk-octeon_
+            sdk_name: -sdk-octeon-generic_
           - arch: mipsel_24kc
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ramips/mt7620
             sdk_name: -sdk-ramips-mt7620_
           - arch: mipsel_24kc_24kf
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/pistachio/generic
-            sdk_name: -sdk-pistachio_
+            sdk_name: -sdk-pistachio-generic_
           - arch: mipsel_74kc
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm47xx/mips74k
             sdk_name: -sdk-bcm47xx-mips74k_
@@ -79,9 +77,7 @@ jobs:
           - arch: mips_24kc
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/ath79/generic
             sdk_name: -sdk-ath79-generic_
-          - arch: mips_mips32
-            sdk_url_path: https://downloads.openwrt.org/snapshots/targets/bcm63xx/generic
-            sdk_name: -sdk-bcm63xx-generic_
+
           - arch: x86_64
             sdk_url_path: https://downloads.openwrt.org/snapshots/targets/x86/64
             sdk_name: -sdk-x86-64_
