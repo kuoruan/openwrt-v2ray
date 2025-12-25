@@ -9,12 +9,13 @@ jobs:
   check:
     name: Check Version
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner }} == "kuoruan"
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get Latest Version
         id: get_version
