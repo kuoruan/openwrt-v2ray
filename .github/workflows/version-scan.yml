@@ -83,3 +83,6 @@ jobs:
 
           git commit -m "chore: bump to v${version}-1"
           git push -u origin "$release_branch"
+
+          git tag "v${version}"
+          git push origin "v${version}"
