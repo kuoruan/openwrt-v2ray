@@ -61,6 +61,7 @@ jobs:
           PAT: ${{ secrets.PAT }}
         run: |
           if [ -n "$PAT" ]; then
+            git config --unset-all http.https://github.com/.extraheader
             git remote set-url origin "https://${{ github.actor }}:${PAT}@github.com/${{ github.repository }}"
           fi
 
