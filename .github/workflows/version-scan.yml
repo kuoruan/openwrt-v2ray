@@ -73,9 +73,14 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-          if [ "$(git ls-remote origin "$release_branch" | wc -l)" -gt "0" ] ; then
-            # delete existing release branch
-            git push origin :$release_branch 2>/dev/null || true
+          if [ "$(git ls-remote origin "$release_branch" | wc -l)" -gt "0" ]; then
+            echo "Branch $release_branch already exists. Skipping..."
+            exit 0
+          fi
+
+          if [ "$(git ls-remote origin "refs/tags/v${version}" | wc -l)" -gt "0" ]; then
+            echo "Tag v${version} already exists. Skipping..."
+            exit 0
           fi
 
           git checkout -b "$release_branch"
