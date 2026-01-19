@@ -98,7 +98,11 @@ s#git.openwrt.org/feed/telephony#github.com/openwrt/telephony#
 	rm -rf "feeds/packages/net/$package_name" ) || true
 
 # replace golang with version defined in env
-if [ -n "$golang_commit" ] ; then
+if [ -z "$golang_commit" ]; then
+	golang_commit="master"
+fi
+
+if [ -n "$golang_commit" ]; then
 	( test -d "feeds/packages/lang/golang" && \
 		rm -rf "feeds/packages/lang/golang" ) || true
 
@@ -133,4 +137,28 @@ cd "$dir"
 
 find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
 
-find "$sdk_home_dir/bin/" -type f -name "${package_name}*.ipk" -exec cp -f {} "$dir" \;
+find "$sdk_home_dir/bin/" -type f \( -name "${package_name}*.ipk" -o -name "${package_name}*.apk" \) | while read -r file; do
+	filename=$(basename "$file")
+	extension="${filename##*.}"
+	base="${filename%.*}"
+
+	# Check if ARCH is already in the filename
+	case "$base" in
+		*"$ARCH"*)
+			new_filename="$filename"
+			;;
+		*)
+			new_filename="${base}_${ARCH}.${extension}"
+			;;
+	esac
+
+	echo "Copying $filename to $new_filename"
+	cp -f "$file" "$dir/$new_filename"
+done
+
+if [ -z "$(find "$dir" -maxdepth 1 \( -name "${package_name}*.ipk" -o -name "${package_name}*.apk" \) -print -quit)" ]; then
+	echo "::error::Build failed! No IPK/APK file found."
+	echo "Listing bin directory:"
+	find "$sdk_home_dir/bin/" -type f -exec ls -lh {} \;
+	exit 1
+fi

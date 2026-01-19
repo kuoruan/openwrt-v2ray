@@ -1,107 +1,90 @@
 # openwrt-v2ray
 
-V2Ray for OpenWrt
+V2Ray for OpenWrt.
 
-OpenWrt/LEDE 上可用的 V2Ray
+[![Scan V2Ray Version](https://github.com/nie11kun/openwrt-v2ray/actions/workflows/version-scan.yml/badge.svg)](https://github.com/nie11kun/openwrt-v2ray/actions/workflows/version-scan.yml)
+[![Build and Release](https://github.com/nie11kun/openwrt-v2ray/actions/workflows/build-release.yml/badge.svg)](https://github.com/nie11kun/openwrt-v2ray/actions/workflows/build-release.yml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/nie11kun/openwrt-v2ray)](https://github.com/nie11kun/openwrt-v2ray/releases)
 
-[![Release Version](https://img.shields.io/github/release/kuoruan/openwrt-v2ray.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest) [![Latest Release Download](https://img.shields.io/github/downloads/kuoruan/openwrt-v2ray/latest/total.svg)](https://github.com/kuoruan/openwrt-v2ray/releases/latest) [![Releases Download](https://img.shields.io/github/downloads/kuoruan/openwrt-v2ray/total.svg)](https://github.com/kuoruan/openwrt-v2ray/releases)
+This repository contains OpenWrt packages for V2Ray, with automated updates and builds via GitHub Actions.
 
-For luci-app-v2ray, please head to [kuoruan/luci-app-v2ray](https://github.com/kuoruan/luci-app-v2ray)
+## Automated Workflows
 
-## Install via OPKG
+This repository uses GitHub Actions to automate the maintenance of the V2Ray package:
 
-1. Add new opkg key:
+### 1. Auto-Update (`version-scan.yml`)
+- **Schedule**: Checked daily at 01:00 UTC.
+- **Function**: Scans the upstream [v2fly/v2ray-core](https://github.com/v2fly/v2ray-core) repository for new releases.
+- **Action**: If a new version is found:
+    1.  Updates the `Makefile` with the new version and sha256 hash.
+    2.  Creates a new branch `releases/vX.Y.Z-1`.
+    3.  Pushes the branch and tag to the repository.
+    4.  **Triggers Release Build**: Automatically starts the build process (Requires `PAT` configuration).
 
-```sh
-wget -O kuoruan-public.key http://openwrt.kuoruan.net/packages/public.key
-opkg-key add kuoruan-public.key
-```
+### 2. Build and Release (`build-release.yml`)
+- **Trigger**: Triggered when a new tag is pushed.
+- **Function**:
+    - Sets up the OpenWrt SDK for multiple architectures (e.g., `x86_64`, `aarch64`, `mips`, etc.).
+    - Compiles the `v2ray-core` and `v2ray-core-mini` packages.
+- **Output**: Publishes a new GitHub Release with the compiled `.ipk` artifacts.
 
-2. Add opkg repository:
+### 3. Build Test (`build-test.yml`)
+- **Trigger**: Runs on Pull Requests or pushes to non-release branches.
+- **Function**: Verifies that the package compiles correctly on `x86_64` to prevent broken code from merging.
 
-```sh
-echo "src/gz kuoruan_packages http://openwrt.kuoruan.net/packages/releases/$(. /etc/openwrt_release ; echo $DISTRIB_ARCH)" \
-  >> /etc/opkg/customfeeds.conf
-```
+## Configuration
 
-> Replace `http://` with `https://` if you like.
+To enable the automated workflows (especially the auto-triggering of releases), you must configure the following **Repository Secret**:
 
-3. Install package:
+### `PAT` (Personal Access Token)
+**Required for**: Auto-triggering the Release workflow after a version update.
 
-```sh
-opkg update
-opkg install v2ray-core
-```
+1.  Generate a new token in [GitHub Developer Settings](https://github.com/settings/tokens).
+    -   **Scopes**: `repo` (Full control) and `workflow`.
+2.  Go to this repository's **Settings** -> **Secrets and variables** -> **Actions**.
+3.  Add a new secret named `PAT` with your token value.
 
-For minimal package:
+> [!IMPORTANT]
+> Without a valid `PAT`, the Version Scan will fail to push the update, or will push it without triggering the Release Build.
 
-```sh
-opkg update
-opkg install v2ray-core-mini
-```
+### `OPENWRT_GOLANG_COMMIT` (Optional)
+Used to pin a specific commit of the OpenWrt Golang package feed if needed during build.
 
-4. Upgrade package:
+## Installation
 
-```sh
-opkg update
-opkg upgrade v2ray-core
-```
+### Install via OPKG
+*Instructions assume you have set up a custom repo or downloaded the ipk.*
 
-## Manual Install
+1.  **Download** the `.ipk` file for your architecture from the [Releases Page](https://github.com/nie11kun/openwrt-v2ray/releases).
+2.  **Upload** to your router (e.g., `/tmp/`).
+3.  **Install**:
+    ```sh
+    opkg update
+    opkg install /tmp/v2ray-core*.ipk
+    ```
 
-- Download pre build ipk file from [releases](https://github.com/kuoruan/openwrt-v2ray/releases)
+**Dependencies**: `ca-certificates`
 
-- Upload file to your router, install it with ssh command.
+## Manual Build (Advanced)
 
-```sh
-opkg install v2ray-core*.ipk
-```
+If you want to compile this package manually using the OpenWrt SDK:
 
-Depends:
-
-* ca-certificates
-
-Bin files will install in `/usr/bin`.
-
-## Custom build
-
-1. Use the latest [OpenWrt SDK](https://downloads.openwrt.org/snapshots/) or with source code in master branch (requires golang modules support, commit [openwrt/packages@7dc1f3e](https://github.com/openwrt/packages/commit/7dc1f3e0293588ebc544e8eee104043dd0dacaf5) and later).
-
-2. Enter root directory of SDK, then download the Makefile:
-
-```sh
-git clone https://github.com/kuoruan/openwrt-v2ray.git package/v2ray-core
-```
-
-> For Chinese users, `export GOPROXY=https://goproxy.io` before build.
-
-Start build:
-
-```sh
-./scripts/feeds update -a
-./scripts/feeds install -a
-
-make menuconfig
-
-Network ---> Project V ---> <*> v2ray-core
-
-Network ---> Project V ---> <M> v2ray-core-mini
-
-make package/v2ray-core/{clean,compile} V=s
-```
-
-- You can custom the features in `V2Ray Mini Configuration` option.
-
-3. UPX Compress
-
-If you want to build with UPX compress, the UPX package is required.
-
-```sh
-git clone -b master --depth 1 https://github.com/kuoruan/openwrt-upx.git package/openwrt-upx
-```
-
-## Uninstall
-
-```sh
-opkg remove v2ray-core # v2ray-core-mini
-```
+1.  Download the **OpenWrt SDK** for your target.
+2.  Clone this repository into `package/v2ray-core`:
+    ```sh
+    git clone https://github.com/nie11kun/openwrt-v2ray.git package/v2ray-core
+    ```
+3.  Update feeds:
+    ```sh
+    ./scripts/feeds update -a
+    ./scripts/feeds install -a
+    ```
+4.  Configure:
+    ```sh
+    make menuconfig
+    # Select Network -> Project V -> v2ray-core
+    ```
+5.  Compile:
+    ```sh
+    make package/v2ray-core/compile V=s
+    ```
